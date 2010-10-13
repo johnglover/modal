@@ -53,7 +53,7 @@ site-packages directory, run
 
 To uninstall from site-packages, run
 
-   $ scons -c install
+    $ scons -c install
 
 
 Use
