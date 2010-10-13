@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/Stop.png</file>
+    <file>icons/ZoomIn.png</file>
+    <file>icons/ZoomOut.png</file>
+    <file>icons/Back.png</file>
+    <file>icons/Play.png</file>
+    <file>icons/Delete.png</file>
+    <file>icons/Floppy.png</file>
+    <file>icons/Music.png</file>
+    <file>icons/spanner32.png</file>
+    <file>icons/Write.png</file>
+  </qresource>
+</RCC>
