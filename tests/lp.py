@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from linearprediction import burg, predict
+from modal.lp import burg, predict
 from modal.pydetectionfunctions import burg as c_burg, linear_prediction as c_predict
 import numpy as np
 import unittest

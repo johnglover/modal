@@ -14,12 +14,98 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import spectralprocessing as sp
 import mq
-import linearprediction as lp
-import stats
-import filter
+import lp
 import numpy as np
+import scipy.signal 
+
+# ---------------------------------------------------------------------------------------
+# Spectral processing
+
+def toPolar(x, y):
+    return (np.sqrt((x*x) + (y*y)), np.arctan2(y, x))
+
+def toRectangular(mag, phase):
+    return np.complex(mag * np.cos(phase),
+                      mag * np.sin(phase))
+
+# ---------------------------------------------------------------------------------------
+# Low-pass filter
+
+def lpf(signal, order, cutoff):
+    "Low-pass FIR filter"
+    filter = scipy.signal.firwin(order, cutoff)
+    return np.convolve(signal, filter, 'same')
+
+# ---------------------------------------------------------------------------------------
+# Moving average
+
+def moving_average(signal, num_points):
+    """Smooth signal by returning a num_points moving average.
+    The first and last num_points/2 are zeros.
+    See: http://en.wikipedia.org/wiki/Moving_average"""
+    ma = np.zeros(signal.size)
+    # make sure num_points is odd
+    if num_points % 2 == 0:
+        num_points += 1
+    n = int(num_points / 2)
+    centre = n 
+    # for each num_points window in the signal, calculate the average
+    while centre < signal.size - n:
+        avg = 0.0
+        for i in np.arange(centre-n, centre+n+1):
+            avg += signal[i]
+        avg /= num_points
+        ma[centre] = avg
+        centre += 1
+    return ma
+
+# ---------------------------------------------------------------------------------------
+# Savitzky-Golay
+
+def savitzky_golay(signal, num_points):
+    """Smooth a signal using the Savitzky-Golay algorithm.
+    The first and last num_points/2 are zeros.
+    See: http://www.statistics4u.com/fundstat_eng/cc_filter_savgolay.html"""
+    sg = np.zeros(signal.size)
+    # make sure num_points is valid. If not, use defaults
+    if not num_points in [5, 7, 9, 11]:
+        print "Invalid number of points to Savitzky-Golay algorithm, using default (5)."
+        num_points = 5
+    n = int(num_points / 2)
+    centre = n 
+    # set up savitzky golay coefficients
+    if num_points == 5:
+        coefs = np.array([-3, 12, 17, 12, -3])
+    elif num_points == 7:
+        coefs = np.array([-2, 3, 6, 7, 6, 3, -2])
+    elif num_points == 9:
+        coefs = np.array([-21, 14, 39, 54, 59, 54, 39, 14, -21])
+    elif num_points == 11:
+        coefs = np.array([-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36])
+    # calculate denominator
+    denom = np.sum(coefs)
+    # for each num_points window in the signal, calculate the average
+    while centre < signal.size - n:
+        avg = 0.0
+        c = 0
+        for i in np.arange(centre-n, centre+n+1):
+            # calculate weighted average
+            avg += signal[i] * coefs[c]
+            c += 1
+        avg /= denom
+        sg[centre] = avg
+        centre += 1
+    return sg
+
+# ---------------------------------------------------------------------------------------
+# Normalise
+
+def normalise(values):
+    return np.array(values / np.max(np.abs(values)))
+
+# ---------------------------------------------------------------------------------------
+# Onset Detection Functions
 
 class OnsetDetectionFunction(object):
     SMOOTH_NONE = 0
@@ -66,9 +152,9 @@ class OnsetDetectionFunction(object):
     
     def _smooth(self, signal):
         if self.smooth_type == self.SMOOTH_MOVING_AVERAGE:
-            return stats.moving_average(signal, self.smooth_window)
+            return moving_average(signal, self.smooth_window)
         elif self.smooth_type == self.SMOOTH_SAVITZKY_GOLAY:
-            return stats.savitzky_golay(signal, self.smooth_window)
+            return savitzky_golay(signal, self.smooth_window)
         elif self.smooth_type == self.SMOOTH_LPF:
             return filter.lpf(signal, self.lpf_order, self.lpf_cutoff)
         # default action is not to smooth
@@ -96,7 +182,7 @@ class OnsetDetectionFunction(object):
         return self.det_func
 
     def post_process(self):
-        self.det_func = stats.normalise(self.det_func)
+        self.det_func = normalise(self.det_func)
     
     def smooth_type_string(self):
         if self.smooth_type == self.SMOOTH_MOVING_AVERAGE:
@@ -184,7 +270,7 @@ class ComplexODF(OnsetDetectionFunction):
             # bring it into the range +- pi
             predicted_phase -= 2 * np.pi * np.round(predicted_phase / (2*np.pi))
             # convert back into the complex domain to calculate stationarities
-            self.prediction[bin] = sp.toRectangular(self.prev_mags[bin], predicted_phase)
+            self.prediction[bin] = toRectangular(self.prev_mags[bin], predicted_phase)
             # get stationarity measures in the complex domain
             real = (self.prediction[bin].real - spectrum[bin].real)
             real = real*real
@@ -193,8 +279,8 @@ class ComplexODF(OnsetDetectionFunction):
             cd += np.sqrt(real + imag)
             # update previous phase info for the next frame
             self.prev_phases2[bin] = self.prev_phases[bin]
-            self.prev_mags[bin], self.prev_phases[bin] = sp.toPolar(spectrum[bin].real,
-                                                                    spectrum[bin].imag)
+            self.prev_mags[bin], self.prev_phases[bin] = toPolar(spectrum[bin].real,
+                                                                 spectrum[bin].imag)
         return cd
 
 
