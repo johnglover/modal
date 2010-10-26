@@ -1,8 +1,6 @@
 Musical Onset And Database Library (Modal)
 ==========================================
 
-About
------
 Modal is a cross-platform library for musical onset detection, written in C++ and Python.
 It is provided here under the terms of the GNU General Public License.
 It consists of code for several different types of Onset Detection Function (ODF), code for
@@ -76,4 +74,5 @@ results respectively for all analysis data.
 Contributing
 ------------
 
-Just fork and let me know.
+Send any comments, queries, suggestions or bug reports to john dot glover at nuim dot ie.
+
