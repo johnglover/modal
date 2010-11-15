@@ -74,5 +74,5 @@ results respectively for all analysis data.
 Contributing
 ------------
 
-Send any comments, queries, suggestions or bug reports to john dot glover at nuim dot ie.
+Send any comments, queries, suggestions or bug reports to john dot c dot glover at nuim dot ie.
 
