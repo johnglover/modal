@@ -33,7 +33,6 @@ class ODFPeak(object):
         self.threshold_at_peak = 0
         self.size = 0
     
-
 class OnsetDetection(object):
     # threshold types
     THRESHOLD_NONE = 0
@@ -111,10 +110,19 @@ class OnsetDetection(object):
                 peak = ODFPeak()
                 peak.location = i
                 peak.value = self.odf[i]
-                peak.threshold_at_peak = self.threshold
+                peak.threshold_at_peak = self.threshold[i]
                 peak.size = self.peak_size
                 self.peaks.append(peak)
         return self.peaks
+
+    def get_peak(self, location):
+        """Return the ODFPeak object with a given peak.location value.
+        Returns None if no such peak exists."""
+        if self.peaks:
+            for p in self.peaks:
+                if p.location == location:
+                    return p
+        return None
     
     def find_onsets(self, odf):
         self.onsets = []
@@ -166,7 +174,7 @@ class OnsetDetection(object):
                     # find the last point before the peak where the
                     # odf is above the threshold
                     while i > 1:
-                        if self.det_func[i-1] < o.odf_peak.threshold_at_peak:
+                        if self.det_func[i-1] < peak.threshold_at_peak:
                             break
                         if (i-1) <= prev_peak_location:
                             break
@@ -177,7 +185,6 @@ class OnsetDetection(object):
             prev_peak_location = peak.location
         return np.array(self.onsets)
     
-
 class RTOnsetDetection(object):
     def __init__(self):
         self.num_values = 10
@@ -213,4 +220,3 @@ class RTOnsetDetection(object):
             return result, self.threshold
         else:
             return result
-
