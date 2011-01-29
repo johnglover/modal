@@ -20,8 +20,10 @@ import matplotlib.pyplot as plt
 
 def scheme(n, scheme=0):
     colours = [["#81aac4", "#95b2c4", "#aab9c3", "#c5a483", "#c5ad97", "#c4b7aa"],
-               ["#d1ccbb", "#d2cfbf", "#c7cdc1", "#9baca1", "#5f585a", "#7f7777"]]
+               ["#d1ccbb", "#d2cfbf", "#c7cdc1", "#9baca1", "#5f585a", "#7f7777"],
+               ["#81aac4", "#81aac4", "#81aac4", "#7f7777", "#7f7777", "#7f7777", "#9baca1"]]
     styles = [["-", "--", ":", "-", "--", ":"],
+              ["-", "--", ":", "-", "--", ":"],
               ["-", "--", ":", "-", "--", ":"]]
     if scheme < 0 or scheme >= len(colours) or scheme >= len(styles):
         raise Exception("Unknown colour scheme:", scheme)
