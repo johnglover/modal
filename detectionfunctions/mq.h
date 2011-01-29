@@ -1,5 +1,5 @@
 /* Copyright (c) 2010 John Glover, National University of Ireland, Maynooth
-
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -48,6 +48,7 @@ typedef struct MQParameters
     sample peak_threshold;
     sample fundamental;
     sample matching_interval;
+    sample* window;
     sample* fft_in;
 	fftw_complex* fft_out;
 	fftw_plan fft_plan;

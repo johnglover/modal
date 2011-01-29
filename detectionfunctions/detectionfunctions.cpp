@@ -238,6 +238,7 @@ SpectralDifferenceODF::SpectralDifferenceODF()
 
 SpectralDifferenceODF::~SpectralDifferenceODF()
 {
+    if(window) delete [] window;
     if(prev_amps) delete [] prev_amps;
     if(in) fftw_free(in);
     if(out) fftw_free(out);
@@ -247,6 +248,14 @@ SpectralDifferenceODF::~SpectralDifferenceODF()
 void SpectralDifferenceODF::reset()
 {
     num_bins = (frame_size/2) + 1;
+
+    if(window) delete [] window;
+    window = new sample[frame_size];
+    for(int i = 0; i < frame_size; i++)
+    {
+        window[i] = 1.0;
+    }
+    hann_window(frame_size, window);
 
     if(prev_amps) delete [] prev_amps;
     prev_amps = new sample[num_bins];
@@ -279,7 +288,7 @@ sample SpectralDifferenceODF::process_frame(int signal_size, sample* signal)
 
     /* do a FFT of the current frame */
     memcpy(in, &signal[0], sizeof(sample)*frame_size);
-    hann_window(frame_size, in);
+    window_frame(in);
     fftw_execute(p);
 
     /* calculate the amplitude differences between bins from consecutive frames */
@@ -311,6 +320,7 @@ ComplexODF::ComplexODF()
 
 ComplexODF::~ComplexODF()
 {
+    if(window) delete [] window;
     if(prev_amps) delete [] prev_amps;
     if(prev_phases) delete [] prev_phases;
     if(prev_phases2) delete [] prev_phases2;
@@ -322,6 +332,14 @@ ComplexODF::~ComplexODF()
 void ComplexODF::reset()
 {
     num_bins = (frame_size/2) + 1;
+
+    if(window) delete [] window;
+    window = new sample[frame_size];
+    for(int i = 0; i < frame_size; i++)
+    {
+        window[i] = 1.0;
+    }
+    hann_window(frame_size, window);
 
     if(prev_amps) delete [] prev_amps;
     prev_amps = new sample[num_bins];
@@ -368,7 +386,7 @@ sample ComplexODF::process_frame(int signal_size, sample* signal)
 
     // do a FFT of the current frame
     memcpy(in, &signal[0], sizeof(sample)*frame_size);
-    hann_window(frame_size, in);
+    window_frame(in);
     fftw_execute(p);
 
     // calculate sum of prediction errors
@@ -487,6 +505,14 @@ void LPSpectralDifferenceODF::init()
     coefs = new sample[order];
     num_bins = (frame_size/2) + 1;
 
+    if(window) delete [] window;
+    window = new sample[frame_size];
+    for(int i = 0; i < frame_size; i++)
+    {
+        window[i] = 1.0;
+    }
+    hann_window(frame_size, window);
+
     prev_amps = new sample*[num_bins];
     for(int i = 0; i < num_bins; i++)
     {
@@ -504,6 +530,7 @@ void LPSpectralDifferenceODF::init()
 
 void LPSpectralDifferenceODF::destroy()
 {
+    if(window) delete [] window;
     if(coefs) delete [] coefs;
     if(prev_amps) 
     {
@@ -516,6 +543,12 @@ void LPSpectralDifferenceODF::destroy()
     if(in) fftw_free(in);
     if(out) fftw_free(out);
     fftw_destroy_plan(p);
+
+    window = NULL;
+    coefs = NULL;
+    prev_amps = NULL;
+    in = NULL;
+    out = NULL;
 }
 
 void LPSpectralDifferenceODF::set_frame_size(int value)
@@ -533,7 +566,7 @@ sample LPSpectralDifferenceODF::process_frame(int signal_size, sample* signal)
 
     // do a FFT of the current frame
     memcpy(in, &signal[0], sizeof(sample)*frame_size);
-    hann_window(frame_size, in);
+    window_frame(in);
     fftw_execute(p);
 
     // calculate the amplitude differences between bins from consecutive frames 
@@ -580,6 +613,14 @@ void LPComplexODF::init()
     coefs = new sample[order];
     num_bins = (frame_size/2) + 1;
 
+    if(window) delete [] window;
+    window = new sample[frame_size];
+    for(int i = 0; i < frame_size; i++)
+    {
+        window[i] = 1.0;
+    }
+    hann_window(frame_size, window);
+
     distances = new sample*[num_bins];
     for(int i = 0; i < num_bins; i++)
     {
@@ -604,6 +645,7 @@ void LPComplexODF::init()
 
 void LPComplexODF::destroy()
 {
+    if(window) delete [] window;
     if(coefs) delete [] coefs;
     if(distances) 
     {
@@ -617,6 +659,13 @@ void LPComplexODF::destroy()
     if(in) fftw_free(in);
     if(out) fftw_free(out);
     fftw_destroy_plan(p);
+
+    window = NULL;
+    coefs = NULL;
+    distances = NULL;
+    prev_frame = NULL;
+    in = NULL;
+    out = NULL;
 }
 
 void LPComplexODF::set_frame_size(int value)
@@ -635,7 +684,7 @@ sample LPComplexODF::process_frame(int signal_size, sample* signal)
 
     // do a FFT of the current frame
     memcpy(in, &signal[0], sizeof(sample)*frame_size);
-    hann_window(frame_size, in);
+    window_frame(in);
     fftw_execute(p);
 
     for(int bin = 0; bin < num_bins; bin++)

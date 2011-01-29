@@ -24,6 +24,16 @@
 
 int init_mq(MQParameters* params)
 {
+    /* TODO: check memory allocation */
+    /* allocate memory for window */
+    params->window = (sample*) malloc(sizeof(sample) * params->frame_size);
+    int i;
+    for(i = 0; i < params->frame_size; i++)
+    {
+        params->window[i] = 1.0;
+    }
+    hann_window(params->frame_size, params->window);
+
 	/* allocate memory for FFT */
 	params->fft_in = (sample*) fftw_malloc(sizeof(sample) * params->frame_size);
 	params->fft_out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * params->num_bins);
@@ -43,9 +53,14 @@ int destroy_mq(MQParameters* params)
 {
     if(params)
     {
+        if(params->window) free(params->window);
         if(params->fft_in) free(params->fft_in);
         if(params->fft_out) free(params->fft_out);
         fftw_destroy_plan(params->fft_plan);
+
+        params->window = NULL;
+        params->fft_in = NULL;
+        params->fft_out = NULL;
     }
     return 0;
 }
@@ -139,7 +154,10 @@ PeakList* find_peaks(int signal_size, sample* signal, MQParameters* params)
 
     /* take fft of the signal */
     memcpy(params->fft_in, signal, sizeof(sample)*params->frame_size);
-    hann_window(params->frame_size, params->fft_in);
+    for(i = 0; i < params->frame_size; i++)
+    {
+        params->fft_in[i] *= params->window[i];
+    }
     fftw_execute(params->fft_plan);
 
     /* get initial magnitudes */

@@ -41,6 +41,7 @@ class OnsetDetectionFunction
         int sampling_rate;
         int frame_size;
         int hop_size;
+        sample* window;
 
     public:
         OnsetDetectionFunction()
@@ -48,6 +49,18 @@ class OnsetDetectionFunction
             sampling_rate = 44100;
             frame_size = 512;
             hop_size = 256;
+            window = NULL;
+        }
+
+        virtual void window_frame(sample* frame)
+        {
+            if(window)
+            {
+                for(int i = 0; i < frame_size; i++)
+                {
+                    frame[i] *= window[i];
+                }
+            }
         }
 
         virtual int get_sampling_rate();
