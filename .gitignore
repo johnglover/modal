@@ -4,6 +4,7 @@
 *.so
 *.os
 *_wrap.c
+*_wrap.cc
 
 # OS generated files
 .DS_Store?
@@ -18,4 +19,8 @@ Thumbs.db
 *.sconsign.dblite
 *config.log
 *.sconf*
+variables.cache
 
+# Specific files
+data/*.hdf5
+*pydetectionfunctions.py
