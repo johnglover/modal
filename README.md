@@ -1,4 +1,4 @@
-Musical Onset And Database Library (Modal)
+Musical Onset Database And Library (Modal)
 ==========================================
 
 Modal is a cross-platform library for musical onset detection, written in C++ and Python.
