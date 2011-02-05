@@ -5,6 +5,7 @@
 *.os
 *_wrap.c
 *_wrap.cc
+*_wrap.cpp
 
 # OS generated files
 .DS_Store?
