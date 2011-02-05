@@ -478,4 +478,3 @@ class UnmatchedPeaksODF(PeakODF):
             return peak1.amplitude
         else:
             return 0.0
-

@@ -22,10 +22,9 @@ Dependencies
 ### All platforms
 
 * [Python](http://www.python.org) - tested with 2.6
-* [SCons](http://www.scons.org) - tested with version 2.0
 * [SciPy/NumPy](http://www.scipy.org) - tested with NumPy 1.4.1 and SciPy 0.8
 * [FFTW3](http://www.fftw.org) - tested with version 3.2.2
-* [h5py](http://code.google.com/p/h5py/) - tested with version 1.3.0
+* [h5py](http://code.google.com/p/h5py) - tested with version 1.3.0
 
 Additionally, windows users will need:
 
@@ -33,25 +32,21 @@ Additionally, windows users will need:
 
 ### Optional
 
-* [Matplotlib (plotting)](http://matplotlib.sourceforge.net) - Tested with version 1.0
+* [Matplotlib (for plotting)](http://matplotlib.sourceforge.net) - Tested with version 1.0
+* [Nose (for unit tests)](http://somethingaboutorange.com/mrl/projects/nose)
 
 
 Installation
 ------------
 
-To use the C++ ODFS (recommended for general use as they are considerably faster than the Python versions),
-go to the Modal root directory and run
+First build the extension module (so that the SWIG wrapper files are created) by running
+the following command in the root folder:
 
-    $ scons
+    $ python setup.py build
 
-If this directory is on your Python path, then that's it. If not, to install modal in your Python
-site-packages directory, run
+Then to install the module in your Python site-packages directory:
 
-    $ scons install
-
-To uninstall from site-packages, run
-
-    $ scons -c install
+    $ python setup.py install
 
 
 Use
