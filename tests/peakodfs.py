@@ -15,12 +15,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import modal
-from modal import PeakAmpDifferenceODF
-from modal.pydetectionfunctions import PeakAmpDifferenceODF as CPeakAmpDifferenceODF
+from modal.detectionfunctions.detectionfunctions import PeakAmpDifferenceODF
+from modal.detectionfunctions.pydetectionfunctions import PeakAmpDifferenceODF as CPeakAmpDifferenceODF
 import numpy as np
-import unittest
+from nose.tools import assert_almost_equals
             
-class TestPeakAmpDifferenceODF(unittest.TestCase):
+class TestPeakAmpDifferenceODF(object):
     FLOAT_PRECISION = 3 # number of decimal places to check for accuracy
     max_peaks = 10
     
@@ -46,10 +46,10 @@ class TestPeakAmpDifferenceODF(unittest.TestCase):
         c_samples = np.zeros(len(py_samples), dtype=np.double)
         c_odf.process(audio, c_samples)
 
-        self.assertEquals(len(py_samples), len(c_samples))
+        assert len(py_samples) == len(c_samples)
         for i in range(len(py_samples)):
-            self.assertAlmostEquals(py_samples[i], c_samples[i],
-                                    places=self.FLOAT_PRECISION)
+            assert_almost_equals(py_samples[i], c_samples[i],
+                                 places=self.FLOAT_PRECISION)
 
     def test_py_c_equal_rt(self):       
         audio, sampling_rate, onsets = modal.get_audio_file('piano_G2.wav')
@@ -74,12 +74,6 @@ class TestPeakAmpDifferenceODF(unittest.TestCase):
             frame = audio[audio_pos:audio_pos+frame_size]
             py_odf_value = py_odf.process_frame(frame)
             c_odf_value = c_odf.process_frame(frame)
-            self.assertAlmostEquals(py_odf_value, c_odf_value,
-                                    places=self.FLOAT_PRECISION)
+            assert_almost_equals(py_odf_value, c_odf_value,
+                                 places=self.FLOAT_PRECISION)
             audio_pos += hop_size
-
-if __name__ == '__main__':
-    suite = unittest.TestSuite()
-    suite.addTest(TestPeakAmpDifferenceODF('test_py_c_equal'))
-    suite.addTest(TestPeakAmpDifferenceODF('test_py_c_equal_rt'))
-    unittest.TextTestRunner().run(suite)

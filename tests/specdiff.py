@@ -15,14 +15,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import modal
-from modal import SpectralDifferenceODF, LPSpectralDifferenceODF
-from modal.pydetectionfunctions import SpectralDifferenceODF as CSpectralDifferenceODF
-from modal.pydetectionfunctions import LPSpectralDifferenceODF as CLPSpectralDifferenceODF
+from modal.detectionfunctions.detectionfunctions import SpectralDifferenceODF
+from modal.detectionfunctions.detectionfunctions import LPSpectralDifferenceODF
+from modal.detectionfunctions.pydetectionfunctions import SpectralDifferenceODF as CSpectralDifferenceODF
+from modal.detectionfunctions.pydetectionfunctions import LPSpectralDifferenceODF as CLPSpectralDifferenceODF
 import numpy as np
-import unittest
+from nose.tools import assert_almost_equals
 
-
-class TestODFs(unittest.TestCase):
+class TestODFs(object):
     FLOAT_PRECISION = 5 # number of decimal places to check for accuracy
     
     def test_py_c_equal(self): 
@@ -45,10 +45,10 @@ class TestODFs(unittest.TestCase):
         c_samples = np.zeros(len(py_samples), dtype=np.double)
         c_odf.process(audio, c_samples)
 
-        self.assertEquals(len(py_samples), len(c_samples))
+        assert len(py_samples) == len(c_samples)
         for i in range(len(py_samples)):
-            self.assertAlmostEquals(py_samples[i], c_samples[i],
-                                    places=self.FLOAT_PRECISION)
+            assert_almost_equals(py_samples[i], c_samples[i],
+                                 places=self.FLOAT_PRECISION)
 
     def test_py_c_equal_rt(self):       
         audio, sampling_rate, onsets = modal.get_audio_file('piano_G2.wav')
@@ -71,11 +71,11 @@ class TestODFs(unittest.TestCase):
             frame = audio[audio_pos:audio_pos+frame_size]
             py_odf_value = py_odf.process_frame(frame)
             c_odf_value = c_odf.process_frame(frame)
-            self.assertAlmostEquals(py_odf_value, c_odf_value,
-                                    places=self.FLOAT_PRECISION)
+            assert_almost_equals(py_odf_value, c_odf_value,
+                                 places=self.FLOAT_PRECISION)
             audio_pos += hop_size
 
-class TestLPODFs(unittest.TestCase):
+class TestLPODFs(object):
     FLOAT_PRECISION = 5 # number of decimal places to check for accuracy
     order = 5
     
@@ -101,10 +101,10 @@ class TestLPODFs(unittest.TestCase):
         c_samples = np.zeros(len(py_samples), dtype=np.double)
         c_odf.process(audio, c_samples)
 
-        self.assertEquals(len(py_samples), len(c_samples))
+        assert len(py_samples) == len(c_samples)
         for i in range(len(py_samples)):
-            self.assertAlmostEquals(py_samples[i], c_samples[i],
-                                    places=self.FLOAT_PRECISION)
+            assert_almost_equals(py_samples[i], c_samples[i],
+                                 places=self.FLOAT_PRECISION)
 
     def test_py_c_equal_rt(self):       
         audio, sampling_rate, onsets = modal.get_audio_file('piano_G2.wav')
@@ -127,14 +127,6 @@ class TestLPODFs(unittest.TestCase):
             frame = audio[audio_pos:audio_pos+frame_size]
             py_odf_value = py_odf.process_frame(frame)
             c_odf_value = c_odf.process_frame(frame)
-            self.assertAlmostEquals(py_odf_value, c_odf_value,
-                                    places=self.FLOAT_PRECISION)
+            assert_almost_equals(py_odf_value, c_odf_value,
+                                 places=self.FLOAT_PRECISION)
             audio_pos += hop_size
-
-if __name__ == '__main__':
-    suite = unittest.TestSuite()
-    suite.addTest(TestODFs('test_py_c_equal'))
-    suite.addTest(TestODFs('test_py_c_equal_rt'))
-    suite.addTest(TestLPODFs('test_py_c_equal'))
-    suite.addTest(TestLPODFs('test_py_c_equal_rt'))
-    unittest.TextTestRunner().run(suite)

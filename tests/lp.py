@@ -14,13 +14,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from modal.lp import burg, predict
-from modal.pydetectionfunctions import burg as c_burg, linear_prediction as c_predict
+from modal.detectionfunctions.lp import burg, predict
+from modal.detectionfunctions.pydetectionfunctions import burg as c_burg
+from modal.detectionfunctions.pydetectionfunctions import linear_prediction as c_predict
 import numpy as np
-import unittest
+from nose.tools import assert_almost_equals
 
-
-class TestLinearPrediction(unittest.TestCase):
+class TestLinearPrediction(object):
     FLOAT_PRECISION = 5 # number of decimal places to check for accuracy
     order = 10
     
@@ -33,11 +33,11 @@ class TestLinearPrediction(unittest.TestCase):
             py_coefs = burg(samples, self.order)
             c_burg(samples, self.order, c_coefs)
             # make sure both functions produce the same number of coefficients
-            self.assertEquals(len(py_coefs), len(c_coefs))
+            assert len(py_coefs) == len(c_coefs)
             # make sure coefficient values are equal
             for c in range(len(py_coefs)):
-                self.assertAlmostEquals(py_coefs[c], c_coefs[c],
-                                        places=self.FLOAT_PRECISION)
+                assert_almost_equals(py_coefs[c], c_coefs[c],
+                                     places=self.FLOAT_PRECISION)
             
     def test_predict_py_c_equal(self):
         num_runs = 100
@@ -52,14 +52,8 @@ class TestLinearPrediction(unittest.TestCase):
             py_predictions = predict(samples, coefs, num_predictions)
             c_predict(samples, coefs, c_predictions)
             # make sure both functions produce the same number of predictions
-            self.assertEquals(len(py_predictions), len(c_predictions))
+            assert len(py_predictions) == len(c_predictions)
             # make sure prediction values are equal
             for c in range(len(py_predictions)):
-                self.assertAlmostEquals(py_predictions[c], c_predictions[c],
-                                        places=self.FLOAT_PRECISION)
-
-if __name__ == '__main__':
-    suite = unittest.TestSuite()
-    suite.addTest(TestLinearPrediction('test_burg_py_c_equal'))
-    suite.addTest(TestLinearPrediction('test_predict_py_c_equal'))
-    unittest.TextTestRunner().run(suite)
+                assert_almost_equals(py_predictions[c], c_predictions[c],
+                                     places=self.FLOAT_PRECISION)
