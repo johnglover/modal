@@ -22,5 +22,6 @@ Thumbs.db
 variables.cache
 
 # Specific files
-data/*.hdf5
+*.hdf5
 *pydetectionfunctions.py
+build/*
