@@ -14,7 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import modal.onsetdetection as od
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -29,15 +28,13 @@ def scheme(n, scheme=0):
         raise Exception("Unknown colour scheme:", scheme)
     return colours[scheme][0:n], styles[scheme][0:n]
 
-def plot_onsets(onsets, num_samples):
-    plt.axis([0, num_samples, -1, 1])
-    #_plot_filler(num_samples)
-    y = [1, -1]
+def plot_onsets(onsets, max_height=1.0):
+    y = [max_height, -max_height]
     for onset in onsets:
         x = [onset, onset]
-        plt.plot(x, y, 'r-')
+        plt.plot(x, y, 'r--')
         
-def plot_detection_function(det_func, hop_size, colour=None):
+def plot_detection_function(det_func, hop_size=1, colour=None):
     df = np.zeros(len(det_func) * hop_size)
     sample_offset = 0
     for frame in det_func:
@@ -47,11 +44,6 @@ def plot_detection_function(det_func, hop_size, colour=None):
         plt.plot(df, color=colour)
     else:
         plt.plot(df, '0.4')  
-    
-def _plot_filler(num_samples):
-    # todo: this is a hack because plt.axis doesn't seem to work. Why?
-    filler = np.zeros(num_samples)
-    plt.plot(filler, '1')
     
 def dr_fpr_bars(nlp_drs, lp_drs, nlp_fprs, lp_fprs, details, 
                 x_axis_label, x_tick_labels, file_name=""):
