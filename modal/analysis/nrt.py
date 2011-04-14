@@ -16,7 +16,7 @@
 
 import modal
 from modal.analysis import RTOnsetAnalysis, OnsetAnalysisThread
-import modal.pydetectionfunctions as df
+import modal.detectionfunctions as df
 import time
 
 run_thread = OnsetAnalysisThread()
@@ -37,8 +37,6 @@ for file in files:
         oa.odf.set_hop_size(hop_size)
         if issubclass(odf, modal.LinearPredictionODF):
             oa.odf.set_order(lp_order)
-        #if issubclass(odf, modal.PeakODF):
-            #oa.odf.set_max_peaks(10)
         run_thread.add(oa)
 
 # -----------------------------------------------------------------------------------
