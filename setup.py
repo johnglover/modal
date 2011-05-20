@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (c) 2010 John Glover, National University of Ireland, Maynooth
 # 
 # This program is free software; you can redistribute it and/or modify
