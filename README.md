@@ -24,7 +24,6 @@ Dependencies
 * [Python](http://www.python.org) - tested with 2.6
 * [SciPy/NumPy](http://www.scipy.org) - tested with NumPy 1.4.1 and SciPy 0.8
 * [FFTW3](http://www.fftw.org) - tested with version 3.2.2
-* [h5py](http://code.google.com/p/h5py) - tested with version 1.3.0
 
 Additionally, windows users will need:
 
@@ -32,6 +31,8 @@ Additionally, windows users will need:
 
 ### Optional
 
+* [h5py](http://code.google.com/p/h5py) - tested with version 1.3.0. Used for accessing the
+  sample database, but not needed otherwise.
 * [Matplotlib (for plotting)](http://matplotlib.sourceforge.net) - Tested with version 1.0
 * [Nose (for unit tests)](http://somethingaboutorange.com/mrl/projects/nose)
 
