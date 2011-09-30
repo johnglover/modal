@@ -30,7 +30,7 @@ evaluation purposes. The database can be found in the downloads section, it is n
 in the repository. 
 The database is a hierarchical database, stored in the HDF5 format.
 """
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 # get numpy include directory
 try:
