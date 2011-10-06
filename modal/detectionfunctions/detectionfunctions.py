@@ -102,7 +102,7 @@ def savitzky_golay(signal, num_points):
 # Normalise
 
 def normalise(values):
-    return np.array(values / np.max(np.abs(values)))
+    values /= np.max(np.abs(values))
 
 # ---------------------------------------------------------------------------------------
 # Onset Detection Functions
@@ -164,8 +164,6 @@ class OnsetDetectionFunction(object):
         return 0.0
         
     def process(self, signal, detection_function):
-        self.det_func = detection_function
-
         # give a warning if the hop size does not divide evenly into the signal size
         if len(signal) % self.hop_size != 0:
             print "Warning: hop size (%d) is not a factor of signal size (%d)" % \
@@ -188,12 +186,10 @@ class OnsetDetectionFunction(object):
             i += 1
 
         # perform any post-processing on the ODF, such as smoothing or normalisation
-        self.post_process()
+        normalise(detection_function)
+        self.det_func = detection_function
         return self.det_func
 
-    def post_process(self):
-        self.det_func = normalise(self.det_func)
-    
     def smooth_type_string(self):
         if self.smooth_type == self.SMOOTH_MOVING_AVERAGE:
             "moving_average"
