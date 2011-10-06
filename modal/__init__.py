@@ -86,7 +86,7 @@ def get_audio_file(file_name):
         if file_name in onsets_db:
             # create new arrays so we can close the database connection
             audio = np.array(onsets_db[file_name], dtype=np.double)
-            sampling_rate = onsets_db[file_name].attrs['sampling_rate']
+            sampling_rate = int(onsets_db[file_name].attrs['sampling_rate'])
             onsets = np.array(onsets_db[file_name].attrs['onsets'])
     finally:
         onsets_db.close()
