@@ -17,7 +17,6 @@
 import modal
 import modal.onsetdetection as od
 import modal.ui.plot as trplot
-import modal.detectionfunctions as df
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -27,7 +26,7 @@ audio, sampling_rate, reference_onsets = modal.get_audio_file(file_name)
 frame_size = 2048
 hop_size = 512
 
-odf = df.PeakAmpDifferenceODF()
+odf = modal.PeakAmpDifferenceODF()
 odf.set_frame_size(frame_size)
 odf.set_hop_size(hop_size)
 odf.set_sampling_rate(sampling_rate)
