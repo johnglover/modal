@@ -41,8 +41,10 @@ class TestODFs(object):
             audio = np.hstack((audio, np.zeros(hop_size - (len(audio) % hop_size),
                                                dtype=np.double)))
         # get odf samples
-        py_samples = py_odf.process(audio)
-        c_samples = np.zeros(len(py_samples), dtype=np.double)
+        odf_size = len(audio) / hop_size
+        py_samples = np.zeros(odf_size, dtype=np.double)
+        c_samples = np.zeros(odf_size, dtype=np.double)
+        py_odf.process(audio, py_samples)
         c_odf.process(audio, c_samples)
 
         assert len(py_samples) == len(c_samples)
@@ -97,8 +99,10 @@ class TestLPODFs(object):
             audio = np.hstack((audio, np.zeros(hop_size - (len(audio) % hop_size),
                                                dtype=np.double)))
         # get odf samples
-        py_samples = py_odf.process(audio)
-        c_samples = np.zeros(len(py_samples), dtype=np.double)
+        odf_size = len(audio) / hop_size
+        py_samples = np.zeros(odf_size, dtype=np.double)
+        c_samples = np.zeros(odf_size, dtype=np.double)
+        py_odf.process(audio, py_samples)
         c_odf.process(audio, c_samples)
 
         assert len(py_samples) == len(c_samples)
