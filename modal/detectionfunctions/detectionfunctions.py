@@ -163,19 +163,29 @@ class OnsetDetectionFunction(object):
     def process_frame(self, frame):
         return 0.0
         
-    def process(self, signal):
-        # pad the input signal if necessary
+    def process(self, signal, detection_function):
+        self.det_func = detection_function
+
+        # give a warning if the hop size does not divide evenly into the signal size
         if len(signal) % self.hop_size != 0:
-            signal = np.hstack((signal, np.zeros(self.hop_size - (len(signal) % self.hop_size))))
+            print "Warning: hop size (%d) is not a factor of signal size (%d)" % \
+                (self.hop_size, len(signal))
+            # signal = np.hstack((signal, np.zeros(self.hop_size - (len(signal) % self.hop_size))))
+
+        # make sure the given detection function array is large enough
+        if len(detection_function) < len(signal) / self.hop_size:
+            raise Exception("detection function not large enough: %d (need % d)" 
+                % (len(detection_function), len(signal) / self.hop_size)
+            )
 
         # get a list of values for each frame
-        odf = []
         sample_offset = 0
+        i = 0
         while sample_offset + self.frame_size <= len(signal):
             frame = signal[sample_offset:sample_offset + self.frame_size]
-            odf.append(self.process_frame(frame))
+            detection_function[i] = self.process_frame(frame)
             sample_offset += self.hop_size
-        self.det_func = np.array(odf)
+            i += 1
 
         # perform any post-processing on the ODF, such as smoothing or normalisation
         self.post_process()
