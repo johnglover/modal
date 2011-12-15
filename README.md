@@ -16,6 +16,11 @@ in the repository.
 The database is a hierarchical database, stored in the [HDF5](http://www.hdfgroup.org/HDF5/) format.
 
 
+**Note:** The code needed to replicate the results from the paper
+"Real-time Detection of Musical Onsets with Linear Prediction and Sinusoidal Modelling", published
+in the EURASIP Journal on Advances in Signal Processing (2011) can now be found here:
+http://github.com/johnglover/eurasip2011
+
 Dependencies
 ------------
 
@@ -31,7 +36,7 @@ Additionally, windows users will need:
 
 ### Optional
 
-* [h5py](http://code.google.com/p/h5py) - tested with version 1.3.0. Used for accessing the
+* [h5py](http://code.google.com/p/h5py) - tested with version 1.3.1 and HDF5 version 1.8.4-patch1. Used for accessing the
   sample database, but not needed otherwise.
 * [Matplotlib (for plotting)](http://matplotlib.sourceforge.net) - Tested with version 1.0
 * [Nose (for unit tests)](http://somethingaboutorange.com/mrl/projects/nose)
@@ -58,13 +63,6 @@ that your onset database is in, and that `onsets_path` corresponds to the name o
 This defaults to the `data` folder in the package directory.
 
 Have a look at the examples in the `examples` folder for basic use. 
-
-### ODF Comparison
-
-The files `rt.py` and `nrt.py` in the `analysis` folder show how to build a database of analysis results.
-After making an analysis database, run `computeresults` in the results folder to build a results database.
-The files `avg.py`, `best.py` and `worst.py` can then be used to view average, best and worse case 
-results respectively for all analysis data.
 
 
 Contributing
