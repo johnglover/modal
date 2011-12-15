@@ -21,6 +21,8 @@ The database is a hierarchical database, stored in the [HDF5](http://www.hdfgrou
 in the EURASIP Journal on Advances in Signal Processing (2011) can now be found here:
 http://github.com/johnglover/eurasip2011
 
+All files copyright (c) 2010-2011 John Glover, National University of Ireland, Maynooth (unless otherwise specified)
+
 Dependencies
 ------------
 
