@@ -18,10 +18,22 @@ import numpy as np
 
 def _extract_file(audio_db, output_dir, file_name):
     sampling_rate = int(audio_db[file_name].attrs['sampling_rate'])
+
     audio = np.asarray(np.array(audio_db[file_name]) * 32768.0, np.int16)
     write(os.path.join(output_dir, file_name), sampling_rate, audio)
+
     onsets = [int(o) for o in audio_db[file_name].attrs['onsets']]
-    metadata = {'onsets': onsets, 'sampling_rate': sampling_rate}
+    type = audio_db[file_name].attrs['type']
+    texture = audio_db[file_name].attrs['texture']
+    comments = audio_db[file_name].attrs['comments']
+
+    metadata = {
+        'sampling_rate': sampling_rate,
+        'onsets': onsets, 
+        'type': type,
+        'texture': texture,
+        'comments': comments
+    }
     metadata_file = os.path.join(output_dir, file_name + '.yaml')
     with open(metadata_file, 'w') as f:
         f.write(yaml.dump(metadata))
