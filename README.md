@@ -42,6 +42,7 @@ Additionally, windows users will need:
   sample database, but not needed otherwise.
 * [Matplotlib (for plotting)](http://matplotlib.sourceforge.net) - Tested with version 1.0
 * [Nose (for unit tests)](http://somethingaboutorange.com/mrl/projects/nose)
+* [PyYAML](http://pyyaml.org/wiki/PyYAML) - Metadata can be exported/imported from YAML files. Tested with version 3.10.
 
 
 Installation
