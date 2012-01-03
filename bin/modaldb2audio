@@ -39,7 +39,7 @@ def _extract_file(audio_db, output_dir, file_name):
         f.write(yaml.dump(metadata))
 
 if __name__ == '__main__':
-    usage = 'Usage: db_to_audio <audio database file> <output directory> [<audio file>]'
+    usage = 'Usage: audio2modaldb <audio database file> <output directory> [<audio file>]'
     if len(sys.argv) not in [3, 4]:
         print usage
         sys.exit(1)
