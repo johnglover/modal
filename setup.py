@@ -52,5 +52,5 @@ setup(
     version='1.11',
     ext_modules=[detectionfunctions],
     packages=['modal', 'modal.data', 'modal.detectionfunctions', 'modal.ui', 'modal.utils'],
-    scripts = ['bin/editonsets', 'bin/modaldb2audio']
+    scripts = ['bin/editonsets', 'bin/modaldb2audio', 'bin/audio2modaldb']
 )
