@@ -5,8 +5,10 @@ import os
 import numpy as np
 import h5py
 import sndobj
+import modal
 from modal.ui.editonsetsui import Ui_MainWindow
-# todo:
+
+# TODO:
 # - warn if saving over a file that already exists
 # - add ability to delete files from database
 # - add ability to set the texture of a file
@@ -127,7 +129,7 @@ class EditOnsetsApp(QtGui.QMainWindow):
         self.scene.addItem(self.play_pos_item)
         self.onset_items = []
         # load database
-        self.db_path = "../data/onsets.hdf5"
+        self.db_path = modal.onsets_path
         self.db = h5py.File(self.db_path)
         self._update_db_info()
         self.connect(self.ui.db_files, QtCore.SIGNAL("itemSelectionChanged()"), self.load_audio)
