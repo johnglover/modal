@@ -13,10 +13,10 @@ from detectionfunctions import PeakAmpDifferenceODF
 # file paths
 import os
 pkg_path = os.path.dirname(os.path.realpath(__file__))
-data_path = os.path.join(pkg_path, "data")
-onsets_path = os.path.join(data_path, "onsets.hdf5")
-analysis_path = os.path.join(data_path, "analysis.hdf5")
-results_path = os.path.join(data_path, "results.hdf5")
+data_path = os.environ.get('MODAL_DATA_PATH', os.path.join(pkg_path, "data"))
+onsets_path = os.environ.get(
+    'MODAL_ONSETS_PATH', os.path.join(data_path, "onsets.hdf5")
+)
 
 # list all files in the onsets database
 def list_onset_files():
