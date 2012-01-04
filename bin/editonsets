@@ -11,7 +11,6 @@ from modal.ui.editonsetsui import Ui_MainWindow
 # TODO:
 # - warn if saving over a file that already exists
 # - add ability to delete files from database
-# - add ability to set the texture of a file
 # - fix bug displaying the end of a file when zoomed in
 
 class AudioPlayer(QtCore.QObject):
