@@ -45,7 +45,7 @@ def _add_file(audio_db, file_path):
         audio_db[file_name].attrs[k] = v
 
 if __name__ == '__main__':
-    usage = 'Usage: audio2modaldb <audio database file> <audio file or directory>'
+    usage = 'Usage: modalimport <audio database file> <audio file or directory>'
     if len(sys.argv) != 3:
         print usage
         sys.exit(1)
