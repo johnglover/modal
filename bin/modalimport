@@ -18,6 +18,7 @@ import yaml
 from scipy.io.wavfile import read
 import numpy as np
 
+
 def _add_file(audio_db, file_path):
     # read the audio file
     sampling_rate, audio = read(file_path)
@@ -41,8 +42,9 @@ def _add_file(audio_db, file_path):
     # save to hdf5 database
     file_name = os.path.split(file_path)[1]
     audio_db[file_name] = audio
-    for k,v in metadata.iteritems():
+    for k, v in metadata.iteritems():
         audio_db[file_name].attrs[k] = v
+
 
 if __name__ == '__main__':
     usage = 'Usage: modalimport <audio database file> <audio file or directory>'
@@ -54,7 +56,7 @@ if __name__ == '__main__':
     to_add = sys.argv[2]
     audio_db = None
 
-    try: 
+    try:
         audio_db = h5py.File(audio_db_path, 'w')
 
         if os.path.isfile(to_add):
@@ -68,4 +70,3 @@ if __name__ == '__main__':
     finally:
         if audio_db:
             audio_db.close()
-
