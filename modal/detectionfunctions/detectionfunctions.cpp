@@ -783,6 +783,11 @@ sample PeakAmpDifferenceODF::get_distance(Peak* peak1, Peak* peak2)
     return fabs(peak1->amplitude - peak2->amplitude);
 }
 
+int PeakAmpDifferenceODF::max_odf_value()
+{
+    return get_max_peaks();
+}
+
 //sample peak_distance(Peak* peak1, Peak* peak2, int distance_type)
 //{
 //    if(distance_type == DISTANCE_AMP)

@@ -201,6 +201,10 @@ class PeakODF : public OnsetDetectionFunction
         virtual void set_frame_size(int value);
         virtual int get_max_peaks();
         virtual void set_max_peaks(int value);
+        virtual int max_odf_value()
+        {
+            return 0.0;
+        }
         virtual sample get_distance(Peak* peak1, Peak* peak2);
         sample process_frame(int signal_size, sample* signal);
 };
@@ -215,6 +219,7 @@ class PeakAmpDifferenceODF : public PeakODF
 {
     public:
         sample get_distance(Peak* peak1, Peak* peak2);
+        int max_odf_value();
 };
 
 #endif

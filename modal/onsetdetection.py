@@ -1,4 +1,4 @@
-import numpy as np  
+import numpy as np
 from modal import OnsetDetectionFunction 
 from modal import LinearPredictionODF
 from modal import EnergyODF
@@ -23,11 +23,11 @@ class OnsetDetection(object):
     THRESHOLD_FIXED = 1
     THRESHOLD_MEDIAN = 2
     # onset location in relation to peak
-    ONSET_AT_PEAK = 0      # on the peak
-    ONSET_AT_PEAK_DIFF = 1 # largest point in diff(odf) behind peak
-    ONSET_AT_MINIMA = 2    # at the previous local minima
-    ONSET_AT_THRESHOLD = 3 # last point before the peak where odf >= peak threshold
-     
+    ONSET_AT_PEAK = 0       # on the peak
+    ONSET_AT_PEAK_DIFF = 1  # largest point in diff(odf) behind peak
+    ONSET_AT_MINIMA = 2     # at the previous local minima
+    ONSET_AT_THRESHOLD = 3  # last point before the peak where odf >= peak threshold
+
     def __init__(self):
         self.onsets = []
         self.odf = []
@@ -38,8 +38,8 @@ class OnsetDetection(object):
         self.median_window = 9
         self.onset_location = self.ONSET_AT_PEAK
         # number of neighbouring samples on each side that a peak
-        # must be larger than 
-        self.peak_size = 1 
+        # must be larger than
+        self.peak_size = 1
         self.peaks = []
 
     def _calculate_median_threshold(self):
@@ -48,16 +48,16 @@ class OnsetDetection(object):
 
         self.threshold = np.zeros(len(self.odf))
         for i in range(len(self.odf)):
-           # make sure we have enough signal either side of i to calculate the 
-           # median threshold
-           start_sample = 0
-           end_sample = len(self.odf)
-           if i > (self.median_window / 2):
-               start_sample = i - (self.median_window/2)
-           if i < len(self.odf) - (self.median_window / 2):
-               end_sample = i + (self.median_window/2) + 1
-           median_samples = self.odf[start_sample:end_sample]
-           self.threshold[i] = self.median_a + (self.median_b * np.median(median_samples))
+            # make sure we have enough signal either side of i to calculate the
+            # median threshold
+            start_sample = 0
+            end_sample = len(self.odf)
+            if i > (self.median_window / 2):
+                start_sample = i - (self.median_window / 2)
+            if i < len(self.odf) - (self.median_window / 2):
+                end_sample = i + (self.median_window / 2) + 1
+            median_samples = self.odf[start_sample:end_sample]
+            self.threshold[i] = self.median_a + (self.median_b * np.median(median_samples))
 
     def find_peaks(self):
         self.peaks = []
@@ -71,23 +71,24 @@ class OnsetDetection(object):
                     if self.odf[i] < self.threshold:
                         continue
             # find local maxima
-            # peaks only need to be larger than the nearest self.peak_size neighbours
-            # at boundaries
-            forward_neighbours = min(self.peak_size, len(self.odf) - (i+1))
+            # peaks only need to be larger than the nearest self.peak_size
+            # neighbours at boundaries
+            forward_neighbours = min(self.peak_size, len(self.odf) - (i + 1))
             backward_neighbours = min(self.peak_size, i)
             maxima = True
-            # search all forward neighbours (up to a max of self.peak_size), testing to see
-            # if the current sample is bigger than all of them
+            # search all forward neighbours (up to a max of self.peak_size),
+            # testing to see if the current sample is bigger than all of them
             for p in range(forward_neighbours):
-                if self.odf[i] < self.odf[i+p+1]:
+                if self.odf[i] < self.odf[i + p + 1]:
                     maxima = False
                     break
-            # if it is less than 1 of the forward neighbours, no need to check backwards
+            # if it is less than 1 of the forward neighbours,
+            # no need to check backwards
             if not maxima:
                 continue
             # now test the backwards neighbours
             for p in range(backward_neighbours):
-                if self.odf[i] < self.odf[i-(p+1)]:
+                if self.odf[i] < self.odf[i - (p + 1)]:
                     maxima = False
                     break
             if maxima:
@@ -107,7 +108,7 @@ class OnsetDetection(object):
                 if p.location == location:
                     return p
         return None
-    
+
     def find_onsets(self, odf):
         self.onsets = []
         self.odf = odf
@@ -122,12 +123,12 @@ class OnsetDetection(object):
 
             if self.onset_location == self.ONSET_AT_PEAK_DIFF:
                 # get previous peak_size/2 samples, including peak.location
-                start = (peak.location+1) - (self.peak_size/2)
+                start = (peak.location + 1) - (self.peak_size / 2)
                 if start < 0:
                     start = 0
-                end = peak.location+1
+                end = peak.location + 1
                 if end >= len(self.det_func):
-                    end = len(self.det_func)-1
+                    end = len(self.det_func) - 1
                 samples = self.det_func[start:end]
                 # get the point of biggest change in the samples
                 samples_diff = np.diff(samples)
@@ -137,17 +138,17 @@ class OnsetDetection(object):
                     if samples_diff[i] >= max_diff:
                         max_diff = samples_diff[i]
                         max_diff_pos = i
-                onset_location = peak.location - (len(samples_diff)-max_diff_pos)
+                onset_location = peak.location - (len(samples_diff) - max_diff_pos)
 
             elif self.onset_location == self.ONSET_AT_MINIMA:
                 if peak.location > 1:
                     i = peak.location - 1
                     # find the nearest local minima behind the peak
                     while i > 1:
-                        if (self.det_func[i] <= self.det_func[i+1] and
-                            self.det_func[i] <= self.det_func[i-1]):
+                        if (self.det_func[i] <= self.det_func[i + 1] and
+                            self.det_func[i] <= self.det_func[i - 1]):
                             break
-                        if (i-1) <= prev_peak_location:
+                        if (i - 1) <= prev_peak_location:
                             break
                         i -= 1
                     onset_location = i
@@ -158,9 +159,9 @@ class OnsetDetection(object):
                     # find the last point before the peak where the
                     # odf is above the threshold
                     while i > 1:
-                        if self.det_func[i-1] < peak.threshold_at_peak:
+                        if self.det_func[i - 1] < peak.threshold_at_peak:
                             break
-                        if (i-1) <= prev_peak_location:
+                        if (i - 1) <= prev_peak_location:
                             break
                         i -= 1
                     onset_location = i
@@ -168,26 +169,32 @@ class OnsetDetection(object):
             self.onsets.append(onset_location)
             prev_peak_location = peak.location
         return np.array(self.onsets)
-    
+
+
 class RTOnsetDetection(object):
     def __init__(self):
         self.num_values = 10
         self.num_increasing_values = 1
         self.prev_values = np.zeros(self.num_values)
         self.threshold = 0.1
-        self.mean_weight = 2.0 
-        self.median_weight = 1.00 
+        self.mean_weight = 2.0
+        self.median_weight = 1.00
         self.median_window = 7
         self.largest_peak = 0.0
         self.noise_ratio = 0.05
         self.increasing = True
-    
-    def is_onset(self, odf_value, return_threshold=False):
+        self.max_threshold = 0.05
+
+    def is_onset(self, odf_value, max_value=0, return_threshold=False):
         result = False
 
-        if ((self.prev_values[-1] > self.threshold) and 
-            (self.prev_values[-1] > odf_value) and 
+        if ((self.prev_values[-1] > self.threshold) and
+            (self.prev_values[-1] > odf_value) and
             (self.prev_values[-1] > self.prev_values[-2])):
+            if max_value:
+                if odf_value > self.max_threshold * max_value:
+                    result = True
+            else:
                 result = True
 
         # update threshold

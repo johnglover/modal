@@ -436,6 +436,14 @@ class PeakAmpDifferenceODF(PeakODF):
         else:
             return np.abs(peak1.amplitude - peak2.amplitude)
 
+    def max_odf_value(self):
+        '''
+        As amplitude values are assumed to be floating point numbers
+        between 0 and 1, the maximum deviation in 1 frame is the number
+        of peaks.
+        '''
+        return self._max_peaks
+
 
 class PeakFreqDifferenceODF(PeakODF):
     def __init__(self):
