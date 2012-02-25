@@ -1,19 +1,19 @@
 import numpy as np
-import scipy.signal 
+import scipy.signal
 import mq
 import lp
 
-# ---------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Spectral processing
 
 def toPolar(x, y):
-    return (np.sqrt((x*x) + (y*y)), np.arctan2(y, x))
+    return (np.sqrt((x * x) + (y * y)), np.arctan2(y, x))
 
 def toRectangular(mag, phase):
     return np.complex(mag * np.cos(phase),
                       mag * np.sin(phase))
 
-# ---------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Low-pass filter
 
 def lpf(signal, order, cutoff):
@@ -21,7 +21,7 @@ def lpf(signal, order, cutoff):
     filter = scipy.signal.firwin(order, cutoff)
     return np.convolve(signal, filter, 'same')
 
-# ---------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Moving average
 
 def moving_average(signal, num_points):
@@ -33,18 +33,18 @@ def moving_average(signal, num_points):
     if num_points % 2 == 0:
         num_points += 1
     n = int(num_points / 2)
-    centre = n 
+    centre = n
     # for each num_points window in the signal, calculate the average
     while centre < signal.size - n:
         avg = 0.0
-        for i in np.arange(centre-n, centre+n+1):
+        for i in np.arange(centre - n, centre + n + 1):
             avg += signal[i]
         avg /= num_points
         ma[centre] = avg
         centre += 1
     return ma
 
-# ---------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Savitzky-Golay
 
 def savitzky_golay(signal, num_points):
@@ -57,7 +57,7 @@ def savitzky_golay(signal, num_points):
         print "Invalid number of points to Savitzky-Golay algorithm, using default (5)."
         num_points = 5
     n = int(num_points / 2)
-    centre = n 
+    centre = n
     # set up savitzky golay coefficients
     if num_points == 5:
         coefs = np.array([-3, 12, 17, 12, -3])
@@ -73,7 +73,7 @@ def savitzky_golay(signal, num_points):
     while centre < signal.size - n:
         avg = 0.0
         c = 0
-        for i in np.arange(centre-n, centre+n+1):
+        for i in np.arange(centre - n, centre + n + 1):
             # calculate weighted average
             avg += signal[i] * coefs[c]
             c += 1
@@ -82,13 +82,14 @@ def savitzky_golay(signal, num_points):
         centre += 1
     return sg
 
-# ---------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Normalise
 
 def normalise(values):
-    values /= np.max(np.abs(values))
+    if np.max(np.abs(values)):
+        values /= np.max(np.abs(values))
 
-# ---------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Onset Detection Functions
 
 class OnsetDetectionFunction(object):
@@ -96,12 +97,12 @@ class OnsetDetectionFunction(object):
     SMOOTH_MOVING_AVERAGE = 1  # Moving average filter
     SMOOTH_SAVITZKY_GOLAY = 2  # Savitzky-Golay algorithm
     SMOOTH_LPF = 3  # low-pass filter
-    
+
     def __init__(self):
         self.det_func = np.array([])
         self._sampling_rate = 44100
         self._frame_size = 512
-        self._hop_size = 256 
+        self._hop_size = 256
         self.smooth_type = self.SMOOTH_NONE
         self.smooth_window = 5
         self.lpf_cutoff = 0.15
@@ -133,7 +134,7 @@ class OnsetDetectionFunction(object):
 
     def set_hop_size(self, hop_size):
         self._hop_size = hop_size
-    
+
     def _smooth(self, signal):
         if self.smooth_type == self.SMOOTH_MOVING_AVERAGE:
             return moving_average(signal, self.smooth_window)
@@ -142,11 +143,11 @@ class OnsetDetectionFunction(object):
         elif self.smooth_type == self.SMOOTH_LPF:
             return filter.lpf(signal, self.lpf_order, self.lpf_cutoff)
         # default action is not to smooth
-        return signal 
+        return signal
 
     def process_frame(self, frame):
         return 0.0
-        
+
     def process(self, signal, detection_function):
         # give a warning if the hop size does not divide evenly into the signal size
         if len(signal) % self.hop_size != 0:
@@ -185,7 +186,7 @@ class OnsetDetectionFunction(object):
             return "none"
         else:
             return "Unknown"
-        
+
 
 class EnergyODF(OnsetDetectionFunction):
     def __init__(self):
@@ -205,24 +206,24 @@ class SpectralDifferenceODF(OnsetDetectionFunction):
     def __init__(self):
         OnsetDetectionFunction.__init__(self)
         self.window = np.hanning(self.frame_size)
-        self.num_bins = (self.frame_size/2) + 1
+        self.num_bins = (self.frame_size / 2) + 1
         self.prev_amps = np.zeros(self.num_bins)
 
     def set_frame_size(self, frame_size):
         self._frame_size = frame_size
         self.window = np.hanning(frame_size)
-        self.num_bins = (frame_size/2) + 1
+        self.num_bins = (frame_size / 2) + 1
         self.prev_amps = np.zeros(self.num_bins)
 
     def process_frame(self, frame):
         # fft
-        spectrum = np.fft.rfft(frame*self.window)
+        spectrum = np.fft.rfft(frame * self.window)
         # calculate spectral difference for each bin
         sum = 0.0
         for bin in range(self.num_bins):
             real = spectrum[bin].real
             imag = spectrum[bin].imag
-            amp = np.sqrt((real*real) + (imag*imag))
+            amp = np.sqrt((real * real) + (imag * imag))
             sum += np.abs(amp - self.prev_amps[bin])
             self.prev_amps[bin] = amp
         return sum
@@ -232,7 +233,7 @@ class ComplexODF(OnsetDetectionFunction):
     def __init__(self):
         OnsetDetectionFunction.__init__(self)
         self.window = np.hanning(self.frame_size)
-        self.num_bins = (self.frame_size/2) + 1
+        self.num_bins = (self.frame_size / 2) + 1
         self.prev_mags = np.zeros(self.num_bins)
         self.prev_phases = np.zeros(self.num_bins)
         self.prev_phases2 = np.zeros(self.num_bins)
@@ -241,7 +242,7 @@ class ComplexODF(OnsetDetectionFunction):
     def set_frame_size(self, frame_size):
         self._frame_size = frame_size
         self.window = np.hanning(frame_size)
-        self.num_bins = (frame_size/2) + 1
+        self.num_bins = (frame_size / 2) + 1
         self.prev_mags = np.zeros(self.num_bins)
         self.prev_phases = np.zeros(self.num_bins)
         self.prev_phases2 = np.zeros(self.num_bins)
@@ -249,7 +250,7 @@ class ComplexODF(OnsetDetectionFunction):
 
     def process_frame(self, frame):
         # fft
-        spectrum = np.fft.rfft(frame*self.window)
+        spectrum = np.fft.rfft(frame * self.window)
         # calculate complex difference for each bin
         cd = 0.0
         for bin in range(self.num_bins):
@@ -258,14 +259,14 @@ class ComplexODF(OnsetDetectionFunction):
             # the previous two frames
             predicted_phase = (2 * self.prev_phases[bin]) - self.prev_phases2[bin]
             # bring it into the range +- pi
-            predicted_phase -= 2 * np.pi * np.round(predicted_phase / (2*np.pi))
+            predicted_phase -= 2 * np.pi * np.round(predicted_phase / (2 * np.pi))
             # convert back into the complex domain to calculate stationarities
             self.prediction[bin] = toRectangular(self.prev_mags[bin], predicted_phase)
             # get stationarity measures in the complex domain
             real = (self.prediction[bin].real - spectrum[bin].real)
-            real = real*real
+            real = real * real
             imag = (self.prediction[bin].imag - spectrum[bin].imag)
-            imag = imag*imag
+            imag = imag * imag
             cd += np.sqrt(real + imag)
             # update previous phase info for the next frame
             self.prev_phases2[bin] = self.prev_phases[bin]
