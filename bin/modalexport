@@ -16,30 +16,31 @@ import yaml
 from scipy.io.wavfile import write
 import numpy as np
 
+
 def _extract_file(audio_db, output_dir, file_name):
     sampling_rate = int(audio_db[file_name].attrs['sampling_rate'])
 
     audio = np.asarray(np.array(audio_db[file_name]) * 32768.0, np.int16)
     write(os.path.join(output_dir, file_name), sampling_rate, audio)
 
-    onsets = [int(o) for o in audio_db[file_name].attrs['onsets']]
-    type = audio_db[file_name].attrs['type']
-    texture = audio_db[file_name].attrs['texture']
-    comments = audio_db[file_name].attrs['comments']
+    metadata = dict(audio_db[file_name].attrs)
 
-    metadata = {
-        'sampling_rate': sampling_rate,
-        'onsets': onsets, 
-        'type': type,
-        'texture': texture,
-        'comments': comments
-    }
+    # convert numpy types as the yaml module doesn't know how to serialise them
+    for item in metadata:
+        if type(metadata[item]) == np.ndarray:
+            if issubclass(metadata[item][0].__class__, np.integer):
+                metadata[item] = [int(i) for i in metadata[item]]
+            elif issubclass(metadata[item][0].__class__, np.float):
+                metadata[item] = [float(i) for i in metadata[item]]
+            elif issubclass(metadata[item][0].__class__, np.string_):
+                metadata[item] = [str(i) for i in metadata[item]]
+
     metadata_file = os.path.join(output_dir, file_name + '.yaml')
     with open(metadata_file, 'w') as f:
         f.write(yaml.dump(metadata))
 
 if __name__ == '__main__':
-    usage = 'Usage: modalexport <audio database file> <output directory> [<audio file>]'
+    usage = 'Usage: modalexport <HDF5 file> <output directory> [<audio file>]'
     if len(sys.argv) not in [3, 4]:
         print usage
         sys.exit(1)
@@ -55,7 +56,7 @@ if __name__ == '__main__':
     else:
         file_name = None
 
-    try: 
+    try:
         audio_db = h5py.File(audio_db_path, 'r')
         if file_name:
             _extract_file(audio_db, output_dir, file_name)
@@ -65,4 +66,3 @@ if __name__ == '__main__':
     finally:
         if audio_db:
             audio_db.close()
-
