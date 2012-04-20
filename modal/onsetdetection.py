@@ -1,14 +1,5 @@
 import numpy as np
-from modal import OnsetDetectionFunction 
-from modal import LinearPredictionODF
-from modal import EnergyODF
-from modal import SpectralDifferenceODF
-from modal import ComplexODF
-from modal import LPEnergyODF
-from modal import LPSpectralDifferenceODF
-from modal import LPComplexODF
-from modal import PeakAmpDifferenceODF
-import modal
+
 
 class ODFPeak(object):
     def __init__(self):
@@ -16,7 +7,8 @@ class ODFPeak(object):
         self.value = 0
         self.threshold_at_peak = 0
         self.size = 0
-    
+
+
 class OnsetDetection(object):
     # threshold types
     THRESHOLD_NONE = 0
@@ -26,7 +18,7 @@ class OnsetDetection(object):
     ONSET_AT_PEAK = 0       # on the peak
     ONSET_AT_PEAK_DIFF = 1  # largest point in diff(odf) behind peak
     ONSET_AT_MINIMA = 2     # at the previous local minima
-    ONSET_AT_THRESHOLD = 3  # last point before the peak where odf >= peak threshold
+    ONSET_AT_THRESHOLD = 3  # last point before the peak where odf >= threshold
 
     def __init__(self):
         self.onsets = []
