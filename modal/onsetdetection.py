@@ -165,16 +165,13 @@ class OnsetDetection(object):
 
 class RTOnsetDetection(object):
     def __init__(self):
-        self.num_values = 10
-        self.num_increasing_values = 1
-        self.prev_values = np.zeros(self.num_values)
+        self.prev_values = np.zeros(10)
         self.threshold = 0.1
         self.mean_weight = 2.0
         self.median_weight = 1.00
         self.median_window = 7
         self.largest_peak = 0.0
         self.noise_ratio = 0.05
-        self.increasing = True
         self.max_threshold = 0.05
 
     def is_onset(self, odf_value, max_value=0, return_threshold=False):
