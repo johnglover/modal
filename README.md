@@ -20,3 +20,9 @@ The database is a hierarchical database, stored in the [HDF5](http://www.hdfgrou
 "Real-time Detection of Musical Onsets with Linear Prediction and Sinusoidal Modelling", published
 in the EURASIP Journal on Advances in Signal Processing (2011) can now be found here:
 http://github.com/johnglover/eurasip2011
+
+
+Documentation
+-------------
+
+Project documentation can viewed online at http://readthedocs.org/docs/modal/en/latest/.
