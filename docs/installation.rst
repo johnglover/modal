@@ -1,26 +1,35 @@
 Installation
 ============
 
-Dependencies
-------------
 
-All platforms:
+Required Dependencies
+---------------------
 
-* [Python](http://www.python.org) - tested with 2.6
-* [SciPy/NumPy](http://www.scipy.org) - tested with NumPy 1.4.1 and SciPy 0.8
-* [FFTW3](http://www.fftw.org) - tested with version 3.2.2
+* Python_ (2.6.* or 2.7.*)
+* NumPy_ (1.4+)
+* SciPy_ (0.8+)
+* FFTW3_ (3.2+)
 
-Additionally, windows users will need:
+.. _Python: http://www.python.org
+.. _SciPy: http://www.scipy.org
+.. _NumPy: http://www.numpy.org
+.. _FFTW3: http://www.fftw.org
 
-* [MinGW/MSYS](http://www.mingw.org/)
 
-Optional:
+Optional Dependencies
+---------------------
 
-* [h5py](http://code.google.com/p/h5py) - tested with version 1.3.1 and HDF5 version 1.8.4-patch1. Used for accessing the
-  sample database, but not needed otherwise.
-* [Matplotlib (for plotting)](http://matplotlib.sourceforge.net) - Tested with version 1.0
-* [Nose (for unit tests)](http://somethingaboutorange.com/mrl/projects/nose)
-* [PyYAML](http://pyyaml.org/wiki/PyYAML) - Metadata can be exported/imported from YAML files. Tested with version 3.10.
+* h5py_ for accessing the sample database, but not needed otherwise.
+  (tested with 1.3.1 and HDF5_ version 1.8.4-patch1)
+* Matplotlib_ for plotting (1.0+).
+* Nose_ to run the unit tests.
+* PyYAML_ to import/export metadata from YAML files. (3.10+).
+
+.. _h5py: http://code.google.com/p/h5py
+.. _HDF5: http://www.hdfgroup.org/HDF5
+.. _Matplotlib: http://matplotlib.sourceforge.net
+.. _Nose: http://somethingaboutorange.com/mrl/projects/nose
+.. _PyYAML: http://pyyaml.org/wiki/PyYAML
 
 
 Installing Modal
