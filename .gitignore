@@ -16,4 +16,5 @@ Thumbs.db
 *.wav
 *pydetectionfunctions.py
 build/*
+docs/_build
 modal.egg-info
