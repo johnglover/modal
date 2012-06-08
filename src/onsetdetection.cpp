@@ -37,8 +37,8 @@ bool RTOnsetDetection::is_onset(sample odf_value) {
                 (noise_ratio * largest_peak);
 
     // update values
-    for(int i = 1; i < n_prev_values - 1; i++) {
-        prev_values[i] = prev_values[i + 1];
+    for(int i = n_prev_values - 1; i > 0; i--) {
+        prev_values[i] = prev_values[i - 1];
     }
     prev_values[0] = odf_value;
 
