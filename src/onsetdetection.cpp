@@ -3,9 +3,9 @@
 RTOnsetDetection::RTOnsetDetection() {
     n_prev_values = 10;
     prev_values = new sample[n_prev_values];
-    for(int i = 0; i < n_prev_values; i ++) {
-        prev_values[i] = 0.f;
-    }
+    prev_values_copy = new sample[n_prev_values];
+    memset(prev_values, 0.f, sizeof(sample) * n_prev_values);
+    memset(prev_values_copy, 0.f, sizeof(sample) * n_prev_values);
 
     threshold = 0.1f;
     mean_weight = 2.f;
@@ -19,6 +19,7 @@ RTOnsetDetection::RTOnsetDetection() {
 
 RTOnsetDetection::~RTOnsetDetection() {
     delete[] prev_values;
+    delete[] prev_values_copy;
 }
 
 bool RTOnsetDetection::is_onset(sample odf_value) {
@@ -32,7 +33,8 @@ bool RTOnsetDetection::is_onset(sample odf_value) {
     }
 
     // update threshold
-    threshold = (median_weight * median(prev_values, n_prev_values)) +
+    memcpy(prev_values_copy, prev_values, sizeof(sample) * n_prev_values);
+    threshold = (median_weight * median(prev_values_copy, n_prev_values)) +
                 (mean_weight * mean(prev_values, n_prev_values)) +
                 (noise_ratio * largest_peak);
 

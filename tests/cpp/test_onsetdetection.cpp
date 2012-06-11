@@ -42,7 +42,7 @@ protected:
         RTOnsetDetection od; 
         CPPUNIT_ASSERT(!od.is_onset(0.1));
         CPPUNIT_ASSERT(!od.is_onset(0.6));
-        CPPUNIT_ASSERT(!od.is_onset(0.6));
+        CPPUNIT_ASSERT(!od.is_onset(0.7));
         CPPUNIT_ASSERT(od.is_onset(0.5));
     }
 
