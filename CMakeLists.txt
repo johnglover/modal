@@ -16,7 +16,15 @@ target_link_libraries(modal m fftw3)
 install(TARGETS modal LIBRARY DESTINATION lib)
 install(FILES ${include_files} DESTINATION include/modal)
 
-set(test_source_files src/onsetdetection.cpp
-                      tests/cpp/test_onsetdetection.cpp)
-add_executable(test_onsetdetection ${test_source_files})
-target_link_libraries(test_onsetdetection cppunit)
+
+# ----------------------------------------------------------------------------
+# Tests
+# ----------------------------------------------------------------------------
+if(BUILD_TESTS)
+    set(test_source_files src/onsetdetection.cpp
+                          tests/cpp/test_onsetdetection.cpp)
+    add_executable(test_onsetdetection ${test_source_files})
+    target_link_libraries(test_onsetdetection cppunit)
+else()
+    message("-- Not building tests. To change run CMake with -D BUILD_TESTS=yes")
+endif()

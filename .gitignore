@@ -15,6 +15,7 @@ Thumbs.db
 *.yaml
 *.wav
 *pydetectionfunctions.py
-build/*
+build
+build_release
 docs/_build
 modal.egg-info
