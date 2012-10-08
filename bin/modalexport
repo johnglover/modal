@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+'''
 Copy audio files from a modal database to a given output directory.
 
 An optional audio file name may be given in order to only extract a single
@@ -8,7 +8,7 @@ audio file. If omitted, all files will be extracted.
 
 For each audio file, the metadata will also be extracted to a YAML file in
 the same directory, called file_name.yaml.
-"""
+'''
 import sys
 import os
 import h5py

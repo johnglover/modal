@@ -1,9 +1,16 @@
 import numpy as np
 from nose.tools import assert_almost_equals
 import modal
-from modal.detectionfunctions.detectionfunctions import EnergyODF, LPEnergyODF
-from modal.detectionfunctions.pydetectionfunctions import EnergyODF as CEnergyODF
-from modal.detectionfunctions.pydetectionfunctions import LPEnergyODF as CLPEnergyODF
+
+EnergyODF = \
+    modal.detectionfunctions.detectionfunctions.EnergyODF
+LPEnergyODF = \
+    modal.detectionfunctions.detectionfunctions.LPEnergyODF
+
+CEnergyODF = \
+    modal.detectionfunctions.pydetectionfunctions.EnergyODF
+CLPEnergyODF = \
+    modal.detectionfunctions.pydetectionfunctions.LPEnergyODF
 
 
 class TestEnergyODFs(object):

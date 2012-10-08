@@ -1,19 +1,24 @@
 import numpy as np
 from nose.tools import assert_almost_equals
-from modal.detectionfunctions.lp import burg, predict
-from modal.detectionfunctions.pydetectionfunctions import burg as c_burg
-from modal.detectionfunctions.pydetectionfunctions import linear_prediction as c_predict
+import modal
+
+burg = modal.detectionfunctions.lp.burg
+predict = modal.detectionfunctions.lp.predict
+
+c_burg = modal.detectionfunctions.pydetectionfunctions.burg
+c_predict = modal.detectionfunctions.pydetectionfunctions.linear_prediction
+
 
 class TestLinearPrediction(object):
-    FLOAT_PRECISION = 5 # number of decimal places to check for accuracy
+    FLOAT_PRECISION = 5  # number of decimal places to check for accuracy
     order = 10
-    
-    def test_burg_py_c_equal(self):       
+
+    def test_burg_py_c_equal(self):
         num_runs = 100
         c_coefs = np.zeros(self.order)
         for i in range(num_runs):
             # create a random signal
-            samples = (np.random.random_sample(self.order) * 2) -1
+            samples = (np.random.random_sample(self.order) * 2) - 1
             py_coefs = burg(samples, self.order)
             c_burg(samples, self.order, c_coefs)
             # make sure both functions produce the same number of coefficients
@@ -22,14 +27,14 @@ class TestLinearPrediction(object):
             for c in range(len(py_coefs)):
                 assert_almost_equals(py_coefs[c], c_coefs[c],
                                      places=self.FLOAT_PRECISION)
-            
+
     def test_predict_py_c_equal(self):
         num_runs = 100
         num_predictions = 5
         c_predictions = np.zeros(num_predictions)
         for i in range(num_runs):
             # create a random signal
-            samples = (np.random.random_sample(self.order) * 2) -1
+            samples = (np.random.random_sample(self.order) * 2) - 1
             # create random coefficients
             coefs = np.random.random_sample(self.order)
             # get predictions

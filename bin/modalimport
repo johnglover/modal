@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+'''
 Add a given audio file (or all audio files in a directory) to a modal database.
 
 Will overwrite any existing audio file in the database with the same name.
@@ -9,7 +9,7 @@ For each audio file, the script will also add any metadata from a file in
 the same directory called file_name.yaml. If no such file exists, then the
 audio file will still be added, with default values for the standard
 modal metadata fields.
-"""
+'''
 import sys
 import os
 import glob

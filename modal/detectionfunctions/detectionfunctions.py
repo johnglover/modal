@@ -6,28 +6,34 @@ import lp
 # -----------------------------------------------------------------------------
 # Spectral processing
 
+
 def toPolar(x, y):
     return (np.sqrt((x * x) + (y * y)), np.arctan2(y, x))
+
 
 def toRectangular(mag, phase):
     return np.complex(mag * np.cos(phase),
                       mag * np.sin(phase))
 
+
 # -----------------------------------------------------------------------------
 # Low-pass filter
 
+
 def lpf(signal, order, cutoff):
-    "Low-pass FIR filter"
+    'Low-pass FIR filter'
     filter = scipy.signal.firwin(order, cutoff)
     return np.convolve(signal, filter, 'same')
+
 
 # -----------------------------------------------------------------------------
 # Moving average
 
+
 def moving_average(signal, num_points):
-    """Smooth signal by returning a num_points moving average.
+    '''Smooth signal by returning a num_points moving average.
     The first and last num_points/2 are zeros.
-    See: http://en.wikipedia.org/wiki/Moving_average"""
+    See: http://en.wikipedia.org/wiki/Moving_average'''
     ma = np.zeros(signal.size)
     # make sure num_points is odd
     if num_points % 2 == 0:
@@ -44,20 +50,25 @@ def moving_average(signal, num_points):
         centre += 1
     return ma
 
+
 # -----------------------------------------------------------------------------
 # Savitzky-Golay
 
+
 def savitzky_golay(signal, num_points):
-    """Smooth a signal using the Savitzky-Golay algorithm.
+    '''Smooth a signal using the Savitzky-Golay algorithm.
     The first and last num_points/2 are zeros.
-    See: http://www.statistics4u.com/fundstat_eng/cc_filter_savgolay.html"""
+    See: http://www.statistics4u.com/fundstat_eng/cc_filter_savgolay.html'''
     sg = np.zeros(signal.size)
+
     # make sure num_points is valid. If not, use defaults
     if not num_points in [5, 7, 9, 11]:
-        print "Invalid number of points to Savitzky-Golay algorithm, using default (5)."
+        print 'Invalid number of points to Savitzky-Golay algorithm, ',
+        print 'using default (5).'
         num_points = 5
     n = int(num_points / 2)
     centre = n
+
     # set up savitzky golay coefficients
     if num_points == 5:
         coefs = np.array([-3, 12, 17, 12, -3])
@@ -67,8 +78,10 @@ def savitzky_golay(signal, num_points):
         coefs = np.array([-21, 14, 39, 54, 59, 54, 39, 14, -21])
     elif num_points == 11:
         coefs = np.array([-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36])
+
     # calculate denominator
     denom = np.sum(coefs)
+
     # for each num_points window in the signal, calculate the average
     while centre < signal.size - n:
         avg = 0.0
@@ -82,15 +95,19 @@ def savitzky_golay(signal, num_points):
         centre += 1
     return sg
 
+
 # -----------------------------------------------------------------------------
 # Normalise
+
 
 def normalise(values):
     if np.max(np.abs(values)):
         values /= np.max(np.abs(values))
 
+
 # -----------------------------------------------------------------------------
 # Onset Detection Functions
+
 
 class OnsetDetectionFunction(object):
     SMOOTH_NONE = 0
@@ -149,17 +166,17 @@ class OnsetDetectionFunction(object):
         return 0.0
 
     def process(self, signal, detection_function):
-        # give a warning if the hop size does not divide evenly into the signal size
+        # give a warning if the hop size does not divide evenly into the
+        # signal size
         if len(signal) % self.hop_size != 0:
-            print "Warning: hop size (%d) is not a factor of signal size (%d)" % \
-                (self.hop_size, len(signal))
-            # signal = np.hstack((signal, np.zeros(self.hop_size - (len(signal) % self.hop_size))))
+            print 'Warning: hop size (%d) is not a factor of signal size (%d)'\
+                % (self.hop_size, len(signal))
 
         # make sure the given detection function array is large enough
         if len(detection_function) < len(signal) / self.hop_size:
-            raise Exception("detection function not large enough: %d (need % d)" 
-                % (len(detection_function), len(signal) / self.hop_size)
-            )
+            msg = 'detection function not large enough: %d (need %d)' % \
+                len(detection_function), len(signal) / self.hop_size
+            raise Exception(msg)
 
         # get a list of values for each frame
         sample_offset = 0
@@ -170,22 +187,22 @@ class OnsetDetectionFunction(object):
             sample_offset += self.hop_size
             i += 1
 
-        # perform any post-processing on the ODF, such as smoothing or normalisation
+        # perform any post-processing on the ODF
         normalise(detection_function)
         self.det_func = detection_function
         return self.det_func
 
     def smooth_type_string(self):
         if self.smooth_type == self.SMOOTH_MOVING_AVERAGE:
-            "moving_average"
+            'moving_average'
         elif self.smooth_type == self.SMOOTH_SAVITZKY_GOLAY:
-            "savitzky_golay"
+            'savitzky_golay'
         elif self.smooth_type == self.SMOOTH_LPF:
-            "lpf"
+            'lpf'
         elif self.smooth_type == self.SMOOTH_NONE:
-            return "none"
+            return 'none'
         else:
-            return "Unknown"
+            return 'Unknown'
 
 
 class EnergyODF(OnsetDetectionFunction):
@@ -255,13 +272,16 @@ class ComplexODF(OnsetDetectionFunction):
         cd = 0.0
         for bin in range(self.num_bins):
             # magnitude prediction is just the previous magnitude
-            # phase prediction is the previous phase plus the difference between 
-            # the previous two frames
-            predicted_phase = (2 * self.prev_phases[bin]) - self.prev_phases2[bin]
+            # phase prediction is the previous phase plus the difference
+            # between the previous two frames
+            predicted_phase = (2 * self.prev_phases[bin]) - \
+                self.prev_phases2[bin]
             # bring it into the range +- pi
-            predicted_phase -= 2 * np.pi * np.round(predicted_phase / (2 * np.pi))
+            predicted_phase -= 2 * np.pi * \
+                np.round(predicted_phase / (2 * np.pi))
             # convert back into the complex domain to calculate stationarities
-            self.prediction[bin] = toRectangular(self.prev_mags[bin], predicted_phase)
+            self.prediction[bin] = toRectangular(self.prev_mags[bin],
+                                                 predicted_phase)
             # get stationarity measures in the complex domain
             real = (self.prediction[bin].real - spectrum[bin].real)
             real = real * real
@@ -270,15 +290,15 @@ class ComplexODF(OnsetDetectionFunction):
             cd += np.sqrt(real + imag)
             # update previous phase info for the next frame
             self.prev_phases2[bin] = self.prev_phases[bin]
-            self.prev_mags[bin], self.prev_phases[bin] = toPolar(spectrum[bin].real,
-                                                                 spectrum[bin].imag)
+            self.prev_mags[bin], self.prev_phases[bin] = \
+                toPolar(spectrum[bin].real, spectrum[bin].imag)
         return cd
 
 
 class LinearPredictionODF(OnsetDetectionFunction):
     AUTOCORRELATION = 0
     BURG = 1
-    
+
     def __init__(self):
         OnsetDetectionFunction.__init__(self)
         self._order = 5
@@ -292,21 +312,23 @@ class LinearPredictionODF(OnsetDetectionFunction):
 
     def set_order(self, order):
         self._order = order
- 
+
     def get_coefs(self, samples, order):
         if self.method == self.AUTOCORRELATION:
             return lp.autocorrelation(samples, order)
         elif self.method == self.BURG:
             return lp.burg(samples, order)
         else:
-            raise Exception("Unknown method specified for finding linear prediction coefficients")
-        
+            msg = 'Unknown method specified for finding linear '
+            msg += 'prediction coefficients'
+            raise Exception(msg)
+
     def get_prediction(self, samples, order=None):
         if order:
             return lp.predict(samples, self.get_coefs(samples, order), 1)[0]
         return lp.predict(samples, self.get_coefs(samples, self.order), 1)[0]
-    
-    
+
+
 class LPEnergyODF(LinearPredictionODF):
     def __init__(self):
         LinearPredictionODF.__init__(self)
@@ -315,38 +337,39 @@ class LPEnergyODF(LinearPredictionODF):
     def process_frame(self, frame):
         energy = 0.0
         for sample in frame:
-           energy += (sample * sample)
+            energy += (sample * sample)
         odf = abs(energy - self.get_prediction(self.prev_values))
         self.prev_values = np.hstack((self.prev_values[1:], energy))
         return odf
 
-            
+
 class LPSpectralDifferenceODF(LinearPredictionODF):
     def __init__(self):
         LinearPredictionODF.__init__(self)
         self.window = np.hanning(self.frame_size)
-        self.num_bins = (self.frame_size/2) + 1
+        self.num_bins = (self.frame_size / 2) + 1
         self.prev_amps = np.zeros((self.order + 1, self.num_bins))
 
     def set_frame_size(self, frame_size):
         self._frame_size = frame_size
         self.window = np.hanning(frame_size)
-        self.num_bins = (frame_size/2) + 1
+        self.num_bins = (frame_size / 2) + 1
         self.prev_amps = np.zeros((self.order + 1, self.num_bins))
 
     def process_frame(self, frame):
         # fft
-        spectrum = np.fft.rfft(frame*self.window)
+        spectrum = np.fft.rfft(frame * self.window)
         sum = 0.0
         for bin in range(self.num_bins):
             real = spectrum[bin].real
             imag = spectrum[bin].imag
-            amp = np.sqrt((real*real) + (imag*imag))
-            samples = self.prev_amps[0:self.order,bin]
+            amp = np.sqrt((real * real) + (imag * imag))
+            samples = self.prev_amps[0:self.order, bin]
             sum += np.abs(self.get_prediction(samples) - amp)
             self.prev_amps[-1][bin] = amp
         # move prev amps back 1 frame
-        self.prev_amps = np.vstack((self.prev_amps[1:], np.zeros(self.num_bins)))
+        self.prev_amps = np.vstack((self.prev_amps[1:],
+                                    np.zeros(self.num_bins)))
         return sum
 
 
@@ -354,30 +377,33 @@ class LPComplexODF(LinearPredictionODF):
     def __init__(self):
         LinearPredictionODF.__init__(self)
         self.window = np.hanning(self.frame_size)
-        self.num_bins = (self.frame_size/2) + 1
+        self.num_bins = (self.frame_size / 2) + 1
         self.prev_frame = np.zeros(self.num_bins, dtype=np.complex)
         self.distances = np.zeros((self.order + 1, self.num_bins))
 
     def set_frame_size(self, frame_size):
         self._frame_size = frame_size
         self.window = np.hanning(frame_size)
-        self.num_bins = (frame_size/2) + 1
+        self.num_bins = (frame_size / 2) + 1
         self.prev_frame = np.zeros(self.num_bins, dtype=np.complex)
         self.distances = np.zeros((self.order + 1, self.num_bins))
 
     def process_frame(self, frame):
         # fft
-        spectrum = np.fft.rfft(frame*self.window)
-        # calculate complex differences    
+        spectrum = np.fft.rfft(frame * self.window)
+        # calculate complex differences
         sum = 0.0
         for bin in range(self.num_bins):
-           distance = np.sqrt((spectrum[bin].real-self.prev_frame[bin].real)**2 +
-                              (spectrum[bin].imag-self.prev_frame[bin].imag)**2)
-           samples = self.distances[0:self.order,bin]
-           sum += np.abs(self.get_prediction(samples) - distance)
-           self.distances[-1][bin] = distance
-           self.prev_frame[bin] = spectrum[bin]
-        self.distances = np.vstack((self.distances[1:], np.zeros(self.num_bins)))
+            distance = np.sqrt(
+                (spectrum[bin].real - self.prev_frame[bin].real) ** 2 +
+                (spectrum[bin].imag - self.prev_frame[bin].imag) ** 2
+            )
+            samples = self.distances[0:self.order, bin]
+            sum += np.abs(self.get_prediction(samples) - distance)
+            self.distances[-1][bin] = distance
+            self.prev_frame[bin] = spectrum[bin]
+        self.distances = np.vstack((self.distances[1:],
+                                    np.zeros(self.num_bins)))
         return sum
 
 
@@ -385,10 +411,11 @@ class PeakODF(OnsetDetectionFunction):
     def __init__(self):
         OnsetDetectionFunction.__init__(self)
         self._max_peaks = 10
-        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate, self._frame_size)
+        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate,
+                                     self._frame_size)
         self.pt = mq.MQPartialTracking(self._max_peaks)
         self.window = np.hanning(self.frame_size)
-        self.num_bins = (self.frame_size/2) + 1
+        self.num_bins = (self.frame_size / 2) + 1
 
     max_peaks = property(lambda self: self.get_max_peaks(),
                          lambda self, x: self.set_max_peaks(x))
@@ -398,27 +425,31 @@ class PeakODF(OnsetDetectionFunction):
 
     def set_max_peaks(self, max_peaks):
         self._max_peaks = max_peaks
-        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate, self._frame_size)
+        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate,
+                                     self._frame_size)
         self.pt = mq.MQPartialTracking(self._max_peaks)
 
     def set_sampling_rate(self, sampling_rate):
         self._sampling_rate = sampling_rate
-        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate, self._frame_size)
+        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate,
+                                     self._frame_size)
 
     def set_frame_size(self, frame_size):
         self._frame_size = frame_size
         self.window = np.hanning(frame_size)
-        self.num_bins = (frame_size/2) + 1
-        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate, self._frame_size)
+        self.num_bins = (frame_size / 2) + 1
+        self.pd = mq.MQPeakDetection(self._max_peaks, self._sampling_rate,
+                                     self._frame_size)
 
     def get_distance(self, peak1, peak2):
         return 0.0
 
     def process_frame(self, frame):
         # fft
-        spectrum = np.fft.rfft(frame*self.window)
+        spectrum = np.fft.rfft(frame * self.window)
         peaks = self.pd.find_peaks(spectrum)
         tracked_peaks = self.pt.track_peaks(peaks)
+
         # calculate odf
         sum = 0.0
         for peak in tracked_peaks:
@@ -464,8 +495,8 @@ class PeakDifferenceODF(PeakODF):
         if not peak2:
             return peak1.amplitude
         else:
-            return np.sqrt((peak1.amplitude - peak2.amplitude) **2 +
-                           (peak1.frequency - peak2.frequency) **2)
+            return np.sqrt((peak1.amplitude - peak2.amplitude) ** 2 +
+                           (peak1.frequency - peak2.frequency) ** 2)
 
 
 class UnmatchedPeaksODF(PeakODF):

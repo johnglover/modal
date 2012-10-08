@@ -12,11 +12,11 @@ try:
     from pydetectionfunctions import LPSpectralDifferenceODF
     from pydetectionfunctions import LPComplexODF
     from pydetectionfunctions import PeakAmpDifferenceODF
-# if not found, use the python versions
 except ImportError, ie:
+    # if not found, use the python versions
     print ie
     print
-    print "Warning: C++ ODF implementions not found, using pure Python ODFs"
+    print 'Warning: C++ ODF implementions not found, using pure Python ODFs'
     from detectionfunctions import EnergyODF
     from detectionfunctions import SpectralDifferenceODF
     from detectionfunctions import ComplexODF

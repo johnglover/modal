@@ -49,7 +49,8 @@ class OnsetDetection(object):
             if i < len(self.odf) - (self.median_window / 2):
                 end_sample = i + (self.median_window / 2) + 1
             median_samples = self.odf[start_sample:end_sample]
-            self.threshold[i] = self.median_a + (self.median_b * np.median(median_samples))
+            self.threshold[i] = self.median_a + (self.median_b *
+                                                 np.median(median_samples))
 
     def find_peaks(self):
         self.peaks = []
@@ -130,7 +131,8 @@ class OnsetDetection(object):
                     if samples_diff[i] >= max_diff:
                         max_diff = samples_diff[i]
                         max_diff_pos = i
-                onset_location = peak.location - (len(samples_diff) - max_diff_pos)
+                onset_location = peak.location - (len(samples_diff) -
+                                                  max_diff_pos)
 
             elif self.onset_location == self.ONSET_AT_MINIMA:
                 if peak.location > 1:
