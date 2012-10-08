@@ -7,8 +7,7 @@
 
 typedef double sample;
 
-typedef struct Peak
-{
+typedef struct Peak {
     float amplitude;
     float frequency;
     float phase;
@@ -17,15 +16,13 @@ typedef struct Peak
     struct Peak* prev;
 } Peak;
 
-typedef struct PeakList
-{
+typedef struct PeakList {
     struct PeakList* next;
     struct PeakList* prev;
     struct Peak* peak;
 } PeakList;
 
-typedef struct MQParameters
-{
+typedef struct MQParameters {
     int frame_size;
     int max_peaks;
     int num_bins;

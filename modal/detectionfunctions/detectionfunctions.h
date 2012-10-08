@@ -18,8 +18,7 @@ void linear_prediction(int signal_size, sample* signal,
 					   int num_coefs, sample* coefs,
 					   int num_predictions, sample* predictions);
 
-class OnsetDetectionFunction
-{
+class OnsetDetectionFunction {
     protected:
         int sampling_rate;
         int frame_size;
@@ -27,20 +26,16 @@ class OnsetDetectionFunction
         sample* window;
 
     public:
-        OnsetDetectionFunction()
-        {
+        OnsetDetectionFunction() {
             sampling_rate = 44100;
             frame_size = 512;
             hop_size = 256;
             window = NULL;
         }
 
-        virtual void window_frame(sample* frame)
-        {
-            if(window)
-            {
-                for(int i = 0; i < frame_size; i++)
-                {
+        virtual void window_frame(sample* frame) {
+            if(window) {
+                for(int i = 0; i < frame_size; i++) {
                     frame[i] *= window[i];
                 }
             }
@@ -53,29 +48,25 @@ class OnsetDetectionFunction
         virtual void set_frame_size(int value);
         virtual void set_hop_size(int value);
 
-        virtual sample process_frame(int signal_size, sample* signal)
-        {
+        virtual sample process_frame(int signal_size, sample* signal) {
             return 0.0;
         }
         void process(int signal_size, sample* signal,
                      int odf_size, sample* odf);
 };
 
-class EnergyODF : public OnsetDetectionFunction
-{
+class EnergyODF : public OnsetDetectionFunction {
     protected:
         sample prev_energy;
 
     public:
-        EnergyODF()
-        {
+        EnergyODF() {
             prev_energy = 0.0;
         }
         sample process_frame(int signal_size, sample* signal);
 };
 
-class SpectralDifferenceODF : public OnsetDetectionFunction
-{
+class SpectralDifferenceODF : public OnsetDetectionFunction {
     protected:
         int num_bins;
         sample* prev_amps;
@@ -91,13 +82,12 @@ class SpectralDifferenceODF : public OnsetDetectionFunction
         sample process_frame(int signal_size, sample* signal);
 };
 
-class ComplexODF : public OnsetDetectionFunction
-{
+class ComplexODF : public OnsetDetectionFunction {
     protected:
         int num_bins;
         sample* prev_amps;
         sample* prev_phases;
-        sample* prev_phases2; // 2 frames ago
+        sample* prev_phases2;  // 2 frames ago
         sample* in;
         fftw_complex* out;
         fftw_plan p;
@@ -110,33 +100,28 @@ class ComplexODF : public OnsetDetectionFunction
         sample process_frame(int signal_size, sample* signal);
 };
 
-class LinearPredictionODF : public OnsetDetectionFunction
-{
+class LinearPredictionODF : public OnsetDetectionFunction {
     protected:
         int order;
         sample* coefs;
 
     public:
-        LinearPredictionODF()
-        {
+        LinearPredictionODF() {
             order = 5;
         }
         virtual void init() {}
         virtual void destroy() {}
-        virtual int get_order()
-        {
+        virtual int get_order() {
             return order;
         }
-        virtual void set_order(int value)
-        {
+        virtual void set_order(int value) {
             destroy();
             order = value;
             init();
         }
 };
 
-class LPEnergyODF : public LinearPredictionODF
-{
+class LPEnergyODF : public LinearPredictionODF {
     protected:
         sample* prev_values;
 
@@ -148,8 +133,7 @@ class LPEnergyODF : public LinearPredictionODF
         sample process_frame(int signal_size, sample* signal);
 };
 
-class LPSpectralDifferenceODF : public LinearPredictionODF
-{
+class LPSpectralDifferenceODF : public LinearPredictionODF {
     protected:
         int num_bins;
         sample** prev_amps;
@@ -166,8 +150,7 @@ class LPSpectralDifferenceODF : public LinearPredictionODF
         sample process_frame(int signal_size, sample* signal);
 };
 
-class LPComplexODF : public LinearPredictionODF
-{
+class LPComplexODF : public LinearPredictionODF {
     protected:
         int num_bins;
         fftw_complex* prev_frame;
@@ -188,8 +171,7 @@ class LPComplexODF : public LinearPredictionODF
 struct MQParameters;
 struct Peak;
 
-class PeakODF : public OnsetDetectionFunction
-{
+class PeakODF : public OnsetDetectionFunction {
     protected:
         MQParameters* mq_params;
 
@@ -200,22 +182,19 @@ class PeakODF : public OnsetDetectionFunction
         virtual void set_frame_size(int value);
         virtual int get_max_peaks();
         virtual void set_max_peaks(int value);
-        virtual sample max_odf_value()
-        {
+        virtual sample max_odf_value() {
             return 0.f;
         }
         virtual sample get_distance(Peak* peak1, Peak* peak2);
         sample process_frame(int signal_size, sample* signal);
 };
 
-class UnmatchedPeaksODF : public PeakODF
-{
+class UnmatchedPeaksODF : public PeakODF {
     public:
         sample get_distance(Peak* peak1, Peak* peak2);
 };
 
-class PeakAmpDifferenceODF : public PeakODF
-{
+class PeakAmpDifferenceODF : public PeakODF {
     public:
         sample get_distance(Peak* peak1, Peak* peak2);
         sample max_odf_value();
