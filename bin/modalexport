@@ -28,16 +28,22 @@ def _extract_file(audio_db, output_dir, file_name):
     # convert numpy types as the yaml module doesn't know how to serialise them
     for item in metadata:
         if type(metadata[item]) == np.ndarray:
-            if issubclass(metadata[item][0].__class__, np.integer):
+            if issubclass(metadata[item][0].__class__, int):
                 metadata[item] = [int(i) for i in metadata[item]]
-            elif issubclass(metadata[item][0].__class__, np.float):
+            elif issubclass(metadata[item][0].__class__, float):
                 metadata[item] = [float(i) for i in metadata[item]]
             elif issubclass(metadata[item][0].__class__, np.string_):
                 metadata[item] = [str(i) for i in metadata[item]]
+        elif issubclass(metadata[item].__class__, int):
+            metadata[item] = int(metadata[item])
+        elif issubclass(metadata[item].__class__, float):
+            metadata[item] = float(metadata[item])
+        elif issubclass(metadata[item].__class__, np.string_):
+            metadata[item] = str(metadata[item])
 
     metadata_file = os.path.join(output_dir, file_name + '.yaml')
     with open(metadata_file, 'w') as f:
-        f.write(yaml.dump(metadata))
+        f.write(yaml.safe_dump(metadata))
 
 if __name__ == '__main__':
     usage = 'Usage: modalexport <HDF5 file> <output directory> [<audio file>]'
