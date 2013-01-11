@@ -7,7 +7,7 @@
 *_wrap.cpp
 *.swp
 
-.DS_Store?
+.DS_Store
 Icon?
 Thumbs.db
 
@@ -18,4 +18,5 @@ Thumbs.db
 build
 build_release
 docs/_build
+dist
 modal.egg-info
