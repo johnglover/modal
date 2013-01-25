@@ -2,6 +2,17 @@
 
 using namespace modal;
 
+void TestOnsetDetection::setUp() {
+    a = new sample[5];
+    for(int i = 0; i < 5; i++) {
+        a[i] = 0.f;
+    }
+}
+
+void TestOnsetDetection::tearDown() {
+    delete[] a;
+}
+
 void TestOnsetDetection::test_mean() {
     a[0] = 1.0;
     a[1] = 4.0;
@@ -22,20 +33,9 @@ void TestOnsetDetection::test_median() {
 }
 
 void TestOnsetDetection::test_is_onset() {
-        RTOnsetDetection od;
-        CPPUNIT_ASSERT(!od.is_onset(0.1));
-        CPPUNIT_ASSERT(!od.is_onset(0.6));
-        CPPUNIT_ASSERT(!od.is_onset(0.7));
-        CPPUNIT_ASSERT(od.is_onset(0.5));
-    }
-
-void TestOnsetDetection::setUp() {
-    a = new sample[5];
-    for(int i = 0; i < 5; i++) {
-        a[i] = 0.f;
-    }
-}
-
-void TestOnsetDetection::tearDown() {
-    delete[] a;
+    RTOnsetDetection od;
+    CPPUNIT_ASSERT(!od.is_onset(0.1));
+    CPPUNIT_ASSERT(!od.is_onset(0.6));
+    CPPUNIT_ASSERT(!od.is_onset(0.7));
+    CPPUNIT_ASSERT(od.is_onset(0.5));
 }

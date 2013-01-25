@@ -33,4 +33,3 @@ public:
 } // end of namespace modal
 
 #endif
-
