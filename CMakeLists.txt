@@ -21,10 +21,11 @@ install(FILES ${include_files} DESTINATION include/modal)
 # Tests
 # ----------------------------------------------------------------------------
 if(BUILD_TESTS)
-    set(test_source_files src/onsetdetection.cpp
-                          tests/cpp/test_onsetdetection.cpp)
-    add_executable(test_onsetdetection ${test_source_files})
-    target_link_libraries(test_onsetdetection cppunit)
+    set(test_src src/onsetdetection.cpp
+                 tests/cpp/tests.cpp
+                 tests/cpp/test_onsetdetection.cpp)
+    add_executable(tests ${test_src})
+    target_link_libraries(tests cppunit)
 else()
     message("-- Not building tests. To change run CMake with -D BUILD_TESTS=yes")
 endif()
