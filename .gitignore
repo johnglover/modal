@@ -13,10 +13,10 @@ Thumbs.db
 
 *.hdf5
 *.yaml
-*.wav
 *pydetectionfunctions.py
 build
 build_release
 docs/_build
 dist
 modal.egg-info
+modal/db/**/*.wav

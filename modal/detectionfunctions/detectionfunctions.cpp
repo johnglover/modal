@@ -1,6 +1,8 @@
 #include "detectionfunctions.h"
 #include "mq.h"
 
+using namespace modal;
+
 // ----------------------------------------------------------------------------
 // Windowing
 
@@ -130,6 +132,13 @@ void OnsetDetectionFunction::set_hop_size(int value) {
 
 void OnsetDetectionFunction::process(int signal_size, sample* signal,
                                      int odf_size, sample* odf) {
+    if(odf_size < (signal_size - frame_size) / hop_size) {
+        throw Exception(std::string("ODF size is too small: must be at ") +
+                        std::string("least (signal_size - frame_size) ") +
+                        std::string("/ hop_size"));
+        return;
+    }
+
     sample odf_max = 0.0;
 	int sample_offset = 0;
 	int frame = 0;
@@ -157,6 +166,13 @@ void OnsetDetectionFunction::process(int signal_size, sample* signal,
 // Energy
 
 sample EnergyODF::process_frame(int signal_size, sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     // calculate signal energy
     sample energy = 0.0;
     sample diff;
@@ -221,6 +237,13 @@ void SpectralDifferenceODF::set_frame_size(int value) {
 }
 
 sample SpectralDifferenceODF::process_frame(int signal_size, sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     sample sum = 0.0;
     sample amp;
     int bin;
@@ -308,6 +331,13 @@ void ComplexODF::set_frame_size(int value) {
 }
 
 sample ComplexODF::process_frame(int signal_size, sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     sample phase_prediction;
     fftw_complex prediction;
     sample sum = 0.0;
@@ -373,6 +403,13 @@ void LPEnergyODF::destroy() {
 }
 
 sample LPEnergyODF::process_frame(int signal_size, sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     sample odf = 0.0;
     sample prediction = 0.0;
 
@@ -463,6 +500,13 @@ void LPSpectralDifferenceODF::set_frame_size(int value) {
 
 sample LPSpectralDifferenceODF::process_frame(int signal_size,
                                               sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     sample sum = 0.0;
     sample amp = 0.0;
     sample prediction = 0.0;
@@ -565,6 +609,13 @@ void LPComplexODF::set_frame_size(int value) {
 }
 
 sample LPComplexODF::process_frame(int signal_size, sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     sample sum = 0.0;
     sample amp = 0.0;
     sample prediction = 0.0;
@@ -647,6 +698,13 @@ sample PeakODF::get_distance(Peak* peak1, Peak* peak2) {
 }
 
 sample PeakODF::process_frame(int signal_size, sample* signal) {
+    if(signal_size != frame_size) {
+        printf("Warning: size of signal passed to process_frame (%d) "
+               "does not match frame_size (%d), updating frame size.\n",
+               signal_size, frame_size);
+        set_frame_size(signal_size);
+    }
+
     PeakList* peaks = track_peaks(
         find_peaks(frame_size, &signal[0], mq_params), mq_params
     );

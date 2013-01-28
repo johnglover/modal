@@ -7,6 +7,7 @@
 #include <fftw3.h>
 #include <math.h>
 #include "mq.h"
+#include "../../src/exceptions.h"
 
 typedef double sample;
 

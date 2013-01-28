@@ -31,6 +31,7 @@ doc_lines = __doc__.split('\n')
 detectionfunctions = Extension(
     'modal/detectionfunctions/_pydetectionfunctions',
     sources=[
+        'src/exceptions.cpp',
         'modal/detectionfunctions/detectionfunctions.cpp',
         'modal/detectionfunctions/mq.cpp',
         'modal/detectionfunctions/detectionfunctions.i'
