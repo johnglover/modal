@@ -36,7 +36,8 @@ detectionfunctions = Extension(
         'modal/detectionfunctions/mq.cpp',
         'modal/detectionfunctions/detectionfunctions.i'
     ],
-    include_dirs=[numpy_include, '/usr/local/include', '/opt/local/include'],
+    include_dirs=['src', numpy_include, '/usr/local/include',
+                  '/opt/local/include'],
     libraries=['m', 'fftw3'],
     swig_opts=['-c++']
 )
