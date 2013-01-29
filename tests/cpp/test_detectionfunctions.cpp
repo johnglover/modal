@@ -38,6 +38,9 @@ void TestPeakODF::test_changing_hop_frame_sizes() {
     int frame_size = 512;
     std::vector<sample> odf_values;
 
+    _odf.set_hop_size(hop_size);
+    _odf.set_frame_size(frame_size);
+
     for(int i = 0; i <= audio.size() - frame_size; i += hop_size) {
         odf_values.push_back(_odf.process_frame(frame_size, &(audio[i]))); 
     }
