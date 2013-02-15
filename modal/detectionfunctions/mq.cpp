@@ -30,14 +30,19 @@ void reset_mq(MQParameters* params) {
 
 int destroy_mq(MQParameters* params) {
     if(params) {
-        if(params->window) free(params->window);
-        if(params->fft_in) free(params->fft_in);
-        if(params->fft_out) free(params->fft_out);
+        if(params->window) {
+            free(params->window);
+            params->window = NULL;
+        }
+        if(params->fft_in) {
+            fftw_free(params->fft_in);
+            params->fft_in = NULL;
+        }
+        if(params->fft_out) {
+            fftw_free(params->fft_out);
+            params->fft_out = NULL;
+        }
         fftw_destroy_plan(params->fft_plan);
-
-        params->window = NULL;
-        params->fft_in = NULL;
-        params->fft_out = NULL;
     }
     return 0;
 }
@@ -132,7 +137,6 @@ PeakList* find_peaks(int signal_size, sample* signal, MQParameters* params) {
         if((current_amp > prev_amp) && 
            (current_amp > next_amp) &&
            (current_amp > params->peak_threshold)) {
-            // create a new Peak
             Peak* p = (Peak*)malloc(sizeof(Peak));
             p->amplitude = current_amp;
             p->frequency = i * params->fundamental;
@@ -141,7 +145,6 @@ PeakList* find_peaks(int signal_size, sample* signal, MQParameters* params) {
             p->next = NULL;
             p->prev = NULL;
 
-            // add it to the appropriate position in the list of Peaks
             add_peak(p, peak_list);
             num_peaks++;
         }
