@@ -179,6 +179,7 @@ class PeakODF : public OnsetDetectionFunction {
     public:
         PeakODF();
         virtual ~PeakODF();
+        virtual void reinit();
         virtual void reset();
         virtual void set_frame_size(int value);
         virtual int get_max_peaks();

@@ -671,7 +671,7 @@ PeakODF::~PeakODF() {
     free(mq_params);
 }
 
-void PeakODF::reset() {
+void PeakODF::reinit() {
     reset_mq(mq_params);
     destroy_mq(mq_params);
     mq_params->frame_size = frame_size;
@@ -680,9 +680,13 @@ void PeakODF::reset() {
     init_mq(mq_params);
 }
 
+void PeakODF::reset() {
+    reset_mq(mq_params);
+}
+
 void PeakODF::set_frame_size(int value) {
     frame_size = value;
-    reset();
+    reinit();
 }
 
 int PeakODF::get_max_peaks() {
