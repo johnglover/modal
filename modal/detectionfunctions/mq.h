@@ -34,6 +34,7 @@ typedef struct MQParameters {
 	fftw_complex* fft_out;
 	fftw_plan fft_plan;
     PeakList* prev_peaks;
+    PeakList* prev_peaks2;
 } MQParameters;
 
 int init_mq(MQParameters* params);
