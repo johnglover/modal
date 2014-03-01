@@ -32,14 +32,62 @@ Optional Dependencies
 .. _PyYAML: http://pyyaml.org/wiki/PyYAML
 
 
-Installing Modal
-----------------
+Installing Modal dependencies on OS X (tested on 10.9.2)
+--------------------------------------------------------
 
-First build the extension module (so that the SWIG wrapper files are created) by running
-the following command in the root folder:
+These instructions assume that you are using Homebrew_ to install packages.
+
+    $ brew install fftw gsl libsndfile cmake gfortran
+
+    $ brew install freetype libpng swig homebrew/science/hdf5
+
+matplotlib currently does not find freetype2 when installed using homebrew,
+so symlink it to /usr/local/include:
+
+    $ ln -s /usr/local/Cellar/freetype/2.5.2/include/freetype2/ /usr/local/include/freetype
+
+.. _Homebrew: http://mxcl.github.com/homebrew
+
+
+Installing Modal dependencies on Linux (Ubuntu 12.04)
+-----------------------------------------------------
+
+    $ sudo apt-get install build-essential libfftw3-dev gsl-bin gsl0-dev libsndfile-dev cmake
+
+    $ sudo apt-get install libblas-dev liblapack-dev gfortran
+
+    $ sudo apt-get install libfreetype6-dev libpng-dev
+
+    $ sudo apt-get install python-dev swig python-numpy python-scipy libhdf5-serial-dev
+
+
+Installing Python dependencies (all platforms)
+----------------------------------------------
+
+These instructions assume that Python and pip are both installed.
+
+Install Python dependencies:
+
+    $ pip install numpy scipy matplotlib cython h5py nose
+
+
+Installing Modal (all platforms)
+--------------------------------
+
+Install the C++ library:
+
+    $ mkdir build_release && cd build_release
+
+    $ cmake -D CMAKE_BUILD_TYPE=Release ..
+
+    $ make
+
+    $ make install
+
+    $ cd ..
+
+Install the Python module:
 
     $ python setup.py build
-
-Then to install the module in your Python site-packages directory:
 
     $ python setup.py install
