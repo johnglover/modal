@@ -1,7 +1,8 @@
 Onset Detection
 ===============
 
-Onset detection detects when a sound (typically a note in music) is played.
+The goal of musical onset detection is to identify the locations in an
+audio signal where new sound events (such as musical notes) begin.
 This tutorial_ describes onset detection in more detail, including
 basics and descriptions of several algorithms.
 
@@ -14,25 +15,28 @@ wavfile_.
 
 ::
 
-    filename = 'moanin_solo.wav'
+    filename = 'audio_input.wav'
     sampling_rate, audio = wavfile.read(file_name)
-    audio = ascontiguousarray(audio, dtype=double)
+    audio = np.asarray(audio, dtype=np.double)
     audio /= np.max(audio)
 
-Our array has to be a contiguous array for ``odf.process(...)``, the reason we
-use ``ascontiguousarray()``.
+Next, define the frame size and the hop size. These are how large
+each analysis window is and how large each step between windows is respectively.
 
-Then, we have to define our frame size and the hop size. These are how large
-each window is and how large each step within the frame is respectively. These
-define how many onsets you detect. Specifically, you detect ``len(audio) /
-hop_size`` onsets.
+This will influence:
+
+* How many onsets you can detect in a signal of a given length, as
+  you can detect at most ``len(audio) / hop_size`` onsets.
+* The accuracy of the onset detection, as most of the detection algorithms rely
+  on detecting changes in audio spectra over time, and larger frame sizes result
+  in higher frequency resolution in the spectra.
 
 ::
 
     frame_size = 2048
     hop_size = 512
 
-Then, we detect our onsets, setting parameters as appropriate.
+Next, compute an onset detection function:
 
 ::
 
@@ -59,10 +63,10 @@ Any one of
     odf = modal.PeakAmpDifferenceODF()
     odf = modal.OnsetDetectionFunction()
 
-can be used for ``modal.ComplexODF()``. Various parameters (``hop_size``,
+can be used instead of ``modal.ComplexODF()``. Various parameters (``hop_size``,
 ``frame_size``) may have to be tuned.
 
-After that intermediate step, we detect onsets.
+Finally, detect onsets:
 
 ::
 
@@ -72,10 +76,6 @@ After that intermediate step, we detect onsets.
 
 This complete example can be found on Github_.
 
-
-
 .. _Github: https://github.com/johnglover/modal/blob/master/modal/examples/example.py
 .. _wavfile: http://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
 .. _tutorial: http://www.cs.bu.edu/~snyder/cs591/Handouts/bello_onset_tutorial.pdf
-
-
