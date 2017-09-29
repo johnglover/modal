@@ -48,7 +48,7 @@ class MQPeakDetection(object):
     '''
     Peak detection, based on the McAulay and Quatieri (MQ) algorithm.
     A peak is defined as the point in the spectrum where the slope changes from
-    position to negative. Hamming window is used, window size must be
+    positive to negative. Hamming window is used, window size must be
     (at least) 2.5 times the average pitch. During voiced sections of speech,
     the window size is updated every 0.25 secs, to the average pitch.
     Unlike the sinusoidal modelling algorithm, this uses a fixed window size.
