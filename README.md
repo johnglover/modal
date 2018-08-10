@@ -11,10 +11,8 @@ All ODFs are implemented in both C++ and Python. The code for Onset detection an
 is currently only available in Python.
 
 Modal also includes a database of musical samples with hand-annotated onset locations for ODF 
-evaluation purposes. The database can be found in the downloads section, it is not included 
-in the repository. 
-The database is a hierarchical database, stored in the [HDF5](http://www.hdfgroup.org/HDF5/) format.
-
+evaluation purposes. The database is a hierarchical database, stored in the [HDF5](http://www.hdfgroup.org/HDF5/) format,
+and can be found [here](https://drive.google.com/file/d/1NA_QZ7r8fpl6xqmnCvPArv5Zo-70GFu9/view?usp=sharing).
 
 **Note:** The code needed to replicate the results from the paper
 "Real-time Detection of Musical Onsets with Linear Prediction and Sinusoidal Modelling", published
